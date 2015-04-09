@@ -1,0 +1,154 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../liquid.js/liquid-import.html">
+
+
+<script>
+  (function () {
+    var templateCache = {};
+
+    Polymer({
+
+      is: 'at-core-view',
+
+      properties: {
+        model: {
+          value: '',
+          notify: true
+        }
+      },
+
+      observers: {
+        'model.*': 'modelChanged'
+      },
+
+      templateCache: {},
+      
+      created: function () {
+        this.templateCache = templateCache;
+      },
+
+      ready: function () {
+
+      },
+
+      render: function () {
+        try {
+
+          var tmpl = this._getCompiledTemplate();
+          if (!tmpl) return;
+
+          var html = tmpl.render(this.model);
+
+          var parent = this.parentNode;
+          if(!!parent.host) parent = parent.host;
+          
+          /*
+          var template = document.createElement('template');
+          template.innerHTML = html;
+
+          var fragment = this.instanceTemplate(template);          
+          Polymer.dom.appendChild(fragment, this.root);
+          */
+          this.root.innerHTML = html;
+
+          // transform ShadyDom styles of innerHTML
+          if(!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is);
+          
+          // -- parse appened code for list of on-* event bindings --
+          var list = [];          
+          Polymer.Annotations._parseNodeAnnotations(this.root, list);
+
+          // -- create listeners on parent node for on-* events 
+          list.forEach(function (a) {
+            if (a.events && a.events.length) {
+              var node = this._findAnnotatedNode(this.root, a);
+              a.events.forEach(function (e) {
+                parent.listen(node, e.name, e.value);
+              }, this);
+            }
+          }, this);
+
+        } catch (ex) {
+          var em = 'Exception caught liquid-template.render: ' + (ex.stack || ex);
+          console.log(em);
+          var emdiv = document.createElement('div');
+          emdiv.innerHTML = em;
+          Polymer.dom(this.root).appendChild(emdiv);
+        }
+      },
+
+      _findAnnotatedNode: function (root, annote) {
+        // recursively ascend tree until we hit root
+        var parent = annote.parent &&
+          Polymer.Annotations.findAnnotatedNode(root, annote.parent);
+        // unwind the stack, returning the indexed node at each level
+        return !parent ? root :
+          Polymer.Annotations._localSubTree(parent, root)[annote.index];
+      },
+
+      _getCompiledTemplate: function () {
+
+        // if cached - return compiled template for this node
+        if (!!this._liquidTemplate) return this._liquidTemplate;
+
+        var src = this.innerHTML.trim();
+        if (!src) return null;
+
+        // is content wrapped into <template> to allow nested components?
+        if (this.children.length == 1 && this.children[0].tagName == "TEMPLATE") {
+
+          var srctmpl = Polymer.dom(this).querySelector('template');
+
+          //converting the fragment content using a throwaway intermediary DOM element (div):
+          var tmpdiv = document.createElement('div');
+          tmpdiv.appendChild(srctmpl._content.cloneNode(true));
+
+          src = tmpdiv.innerHTML.trim();
+
+          //Polymer.dom.removeChild(srctmpl,this);
+        }
+
+        var cacheKey = "unknown";
+
+        if (this.parentNode) {
+          if (this.parentNode.id) cacheKey = this.parentNode.id;
+          if (this.parentNode.host) cacheKey = this.parentNode.host.nodeName;
+        }
+
+        var tmpl = null;
+
+        // use compiled template if already cached
+        var cacheEntry = this.templateCache[cacheKey];
+        if (cacheEntry) {
+
+          if (cacheEntry.template == src) tmpl = cacheEntry.compiledTemplate;
+
+        } else {
+
+          tmpl = Liquid.parse(src);
+
+          // store compiled template in cache
+          this.templateCache[cacheKey] = {
+            template: src,
+            compiledTemplate: tmpl
+          }
+
+        }
+
+
+        // store compiled template per node
+        this._liquidTemplate = tmpl;
+
+        return tmpl;
+      },
+
+
+      modelChanged: function () {
+        this.render();
+      }
+
+    });
+
+  })();
+</script>
+

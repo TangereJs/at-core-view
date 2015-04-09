@@ -1,0 +1,60 @@
+<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="at-core-view.html" />
+
+<dom-module id="my-element">
+
+  <template>
+
+    <style>
+      .red {
+        color: red;
+      }
+    </style>
+
+    <a on-click='clickhandler' class="red">Click me</a> 
+    <br>
+    <at-core-view id="template3" model="{{user}}">
+      <template>
+        <br>Hello {{name.first}} {{name.last}} - Counter = {{counter}}
+        <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
+        <br>
+      </template>
+    </at-core-view> 
+  </template>
+</dom-module>
+
+<script>
+  Polymer({
+    is: "my-element",
+    properties: {
+      hello: {
+        type: String,
+        value: "world",
+        notify: true
+      },
+      user: {
+        type: Object,
+        notify: true,
+        value: {
+          name: {
+            first: 'James',
+            last: 'Cook',           
+          },
+          counter: 1
+        }        
+      }
+    },    
+    clickhandler: function (e) {      
+      
+      // setPathValue is required to notify template(s) about changed value
+      this.setPathValue('user.counter', this.user.counter + 1);
+      
+      //this.$.template3.render(); 
+      console.log("clicked on " + this.id +": \n " + e.toElement.outerHTML);
+    },
+    ready: function () {
+    }
+  });
+</script>
+
+
