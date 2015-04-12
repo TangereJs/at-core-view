@@ -12,7 +12,7 @@
 
       properties: {
         model: {
-          value: '',
+          value: null,
           notify: true
         }
       },
@@ -22,7 +22,7 @@
       },
 
       templateCache: {},
-
+      
       created: function () {
         this.templateCache = templateCache;
       },
@@ -40,8 +40,8 @@
           var html = tmpl.render(this.model);
 
           var parent = this.parentNode;
-          if (!!parent.host) parent = parent.host;
-
+          if(!!parent.host) parent = parent.host;
+          
           /*
           var template = document.createElement('template');
           template.innerHTML = html;
@@ -52,10 +52,10 @@
           this.root.innerHTML = html;
 
           // transform ShadyDom styles of innerHTML
-          if (!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is);
-
+          if(!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is);
+          
           // -- parse appened code for list of on-* event bindings --
-          var list = [];
+          var list = [];          
           Polymer.Annotations._parseNodeAnnotations(this.root, list);
 
           // -- create listeners on parent node for on-* events 
@@ -92,61 +92,68 @@
           var node = nodes[i];
 
           // text node
-          if (node.nodeType == 3) html += node.textContent;
-
+          if(node.nodeType == 3)  html += node.textContent;
+        
           // html node
-          if (node.nodeType == 1) html += node.outerHTML;
+          if(node.nodeType == 1)  html += node.outerHTML;      
 
         }
-
+      
         return html;
       },
       _getCompiledTemplate: function () {
 
+        if (this.model == null) return; // model not yet initialized
+
         // if cached - return compiled template for this node
         if (!!this._liquidTemplate) return this._liquidTemplate;
 
-        var src = this.innerHTML.trim();
-        if (!src) return null;
-
-        // is content wrapped into <template> to allow nested components?
-        if (this.children.length == 1 && this.children[0].tagName == "TEMPLATE") {
-
-          var srctmpl = Polymer.dom(this).querySelector('template');
-          src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-
-        }
-
-        var cacheKey = "unknown";
+        var cacheKey = "", cacheEntry;
+        var tmpl = null;
 
         if (this.parentNode) {
           if (this.parentNode.id) cacheKey = this.parentNode.id;
           if (this.parentNode.host) cacheKey = this.parentNode.host.nodeName;
+          if (!cacheKey && (this.parentNode.nodeName && this.parentNode.nodeName != "#document-fragment")) cacheKey = this.parentNode.nodeName;
+        }
+        
+        // use compiled template if already cached
+        if (cacheKey) {
+          cacheEntry = this.templateCache[cacheKey];
         }
 
-        var tmpl = null;
+        if (cacheEntry && cacheKey) {
 
-        // use compiled template if already cached
-        var cacheEntry = this.templateCache[cacheKey];
-        if (cacheEntry) {
-
-          if (cacheEntry.template == src) tmpl = cacheEntry.compiledTemplate;
+          tmpl = cacheEntry.compiledTemplate;
 
         } else {
+          
+          // get template source
+          var src = this.innerHTML.trim();
+
+          // is content wrapped into <template> to allow nested components?
+          if (this.children.length == 1 && this.children[0].tagName == "TEMPLATE") {
+
+            var srctmpl = Polymer.dom(this).querySelector('template');
+            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+
+          }
+          if (!src) return null;
 
           tmpl = Liquid.parse(src);
 
-          // store compiled template in cache
-          this.templateCache[cacheKey] = {
-            template: src,
-            compiledTemplate: tmpl
+          // store compiled template for parent element in cache
+          if (cacheKey) {
+            this.templateCache[cacheKey] = {
+              template: src,
+              compiledTemplate: tmpl
+            }
           }
 
-        }
+          // store compiled template also per node
+          this._liquidTemplate = tmpl;
 
-
-        // store compiled template per node
-        this._liquidTemplate = tmpl;
+        }        
 
         return tmpl;
       },
