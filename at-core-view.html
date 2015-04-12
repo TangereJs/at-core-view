@@ -22,7 +22,7 @@
       },
 
       templateCache: {},
-      
+
       created: function () {
         this.templateCache = templateCache;
       },
@@ -40,8 +40,8 @@
           var html = tmpl.render(this.model);
 
           var parent = this.parentNode;
-          if(!!parent.host) parent = parent.host;
-          
+          if (!!parent.host) parent = parent.host;
+
           /*
           var template = document.createElement('template');
           template.innerHTML = html;
@@ -52,10 +52,10 @@
           this.root.innerHTML = html;
 
           // transform ShadyDom styles of innerHTML
-          if(!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is);
-          
+          if (!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is);
+
           // -- parse appened code for list of on-* event bindings --
-          var list = [];          
+          var list = [];
           Polymer.Annotations._parseNodeAnnotations(this.root, list);
 
           // -- create listeners on parent node for on-* events 
@@ -85,7 +85,22 @@
         return !parent ? root :
           Polymer.Annotations._localSubTree(parent, root)[annote.index];
       },
+      _getNodesInnerHTML: function (nodes) {
+        // generates combined innerHTML of an array of nodes
+        var html = "";
+        for (var i = 0, ii = nodes.length; i < ii; i++) {
+          var node = nodes[i];
 
+          // text node
+          if (node.nodeType == 3) html += node.textContent;
+
+          // html node
+          if (node.nodeType == 1) html += node.outerHTML;
+
+        }
+
+        return html;
+      },
       _getCompiledTemplate: function () {
 
         // if cached - return compiled template for this node
@@ -98,14 +113,8 @@
         if (this.children.length == 1 && this.children[0].tagName == "TEMPLATE") {
 
           var srctmpl = Polymer.dom(this).querySelector('template');
+          src = this._getNodesInnerHTML(srctmpl._content.childNodes);
 
-          //converting the fragment content using a throwaway intermediary DOM element (div):
-          var tmpdiv = document.createElement('div');
-          tmpdiv.appendChild(srctmpl._content.cloneNode(true));
-
-          src = tmpdiv.innerHTML.trim();
-
-          //Polymer.dom.removeChild(srctmpl,this);
         }
 
         var cacheKey = "unknown";
