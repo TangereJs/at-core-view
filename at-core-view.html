@@ -9,7 +9,7 @@
     Polymer({
 
       is: 'at-core-view',
-
+      _scopeCssViaAttr: true,
       properties: {
         model: {
           value: null,
@@ -52,7 +52,7 @@
           this.root.innerHTML = html;
 
           // transform ShadyDom styles of innerHTML
-          if(!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is);
+          if(!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is, true);
           
           // -- parse appened code for list of on-* event bindings --
           var list = [];          
@@ -69,7 +69,7 @@
           }, this);
 
         } catch (ex) {
-          var em = 'Exception caught liquid-template.render: ' + (ex.stack || ex);
+          var em = 'Exception caught at-core-view.render: ' + (ex.stack || ex);
           console.log(em);
           var emdiv = document.createElement('div');
           emdiv.innerHTML = em;
@@ -90,7 +90,7 @@
         var html = "";
         for (var i = 0, ii = nodes.length; i < ii; i++) {
           var node = nodes[i];
-
+          debugger;
           // text node
           if(node.nodeType == 3)  html += node.textContent;
         
@@ -134,9 +134,9 @@
           // is content wrapped into <template> to allow nested components?
           if (this.children.length == 1 && this.children[0].tagName == "TEMPLATE") {
 
-            var srctmpl = Polymer.dom(this).querySelector('template');
-            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-
+            var srctmpl = Polymer.dom(this).querySelector('template');            
+            //src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+            src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !            
           }
           if (!src) return null;
 
