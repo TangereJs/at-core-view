@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html" />
+<link rel="import" href="../tangere/tangere.html" />
 <link rel="import" href="at-core-view.html" />
 
 <dom-module id="my-element">
@@ -13,12 +13,13 @@
 
     <a on-click='clickhandler' class="red">Click me</a> 
     <br>
-    <template is="at-core-view" id="template3" model="{{user}}" preserve-content>
-      <br>Hello {{name.first}} {{name.last}} - Counter = {{counter}}
-      <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
-      <br>
-    </template>
-
+    <at-core-view id="template3" model="{{user}}">
+      <template preserve-content>
+        <br>Hello {{name.first}} {{name.last}} - Counter = {{counter}}
+        <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
+        <br>
+      </template>
+    </at-core-view>
   </template>
 </dom-module>
 
