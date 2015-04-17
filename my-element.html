@@ -13,13 +13,12 @@
 
     <a on-click='clickhandler' class="red">Click me</a> 
     <br>
-    <at-core-view id="template3" model="{{user}}">
-      <template preserve-content>
-        <br>Hello {{name.first}} {{name.last}} - Counter = {{counter}}
-        <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
-        <br>
-      </template>
-    </at-core-view> 
+    <template is="at-core-view" id="template3" model="{{user}}" preserve-content>
+      <br>Hello {{name.first}} {{name.last}} - Counter = {{counter}}
+      <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
+      <br>
+    </template>
+
   </template>
 </dom-module>
 
@@ -38,22 +37,21 @@
         value: {
           name: {
             first: 'James',
-            last: 'Cook',           
+            last: 'Cook',
           },
           counter: 1
-        }        
+        }
       }
-    },    
-    clickhandler: function (e) {      
-      
+    },
+    clickhandler: function (e) {
+
       // setPathValue is required to notify template(s) about changed value
       this.setPathValue('user.counter', this.user.counter + 1);
 
       //this.$.template3.render(); 
-      console.log("clicked on " + this.id +": \n " + e.toElement.outerHTML);
+      console.log("clicked on " + this.id + ": \n " + e.toElement.outerHTML);
     },
-    ready: function () {
-    }
+    ready: function () {}
   });
 </script>
 
