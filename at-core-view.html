@@ -17,9 +17,9 @@
         }
       },
 
-      observers: {
-        'model.*': 'modelChanged'
-      },
+      observers: [
+        'modelChanged(model.*)'
+      ],
 
       templateCache: {},
 
