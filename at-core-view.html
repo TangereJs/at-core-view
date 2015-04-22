@@ -40,7 +40,7 @@
           var html = tmpl.render(this.model);
 
           var parent = this.parentNode;
-          if (!!parent.host) parent = parent.host;
+          if (!!parent.domHost) parent = parent.domHost;
 
           /*
           var template = document.createElement('template');
@@ -124,7 +124,7 @@
 
         if (this.parentNode) {
           if (this.parentNode.id) cacheKey = this.parentNode.id;
-          if (this.parentNode.host) cacheKey = this.parentNode.host.nodeName;
+          if (this.parentNode.domHost) cacheKey = this.parentNode.domHost.nodeName;
           if (!cacheKey && (this.parentNode.nodeName && this.parentNode.nodeName != "#document-fragment")) cacheKey = this.parentNode.nodeName;
         }
 
