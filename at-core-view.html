@@ -39,8 +39,10 @@
 
           var html = tmpl.render(this.model);
 
-          var parent = this.parentNode;
-          if (!!parent.domHost) parent = parent.domHost;
+          // var parent = this.parentNode;
+          //if (!!parent.domHost) parent = parent.domHost;
+
+          var parent = Polymer.dom(this).getOwnerRoot().host;
 
           /*
           var template = document.createElement('template');
