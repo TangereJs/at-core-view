@@ -120,14 +120,13 @@
         // if cached - return compiled template for this node
         if (!!this._liquidTemplate) return this._liquidTemplate;
 
-        var cacheKey = "",
-          cacheEntry;
+        var cacheKey = "", cacheEntry;
         var tmpl = null;
 
         if (this.parentNode) {
-          if (this.parentNode.id) cacheKey = this.parentNode.id;
-          if (this.parentNode.domHost) cacheKey = this.parentNode.domHost.nodeName;
+          if (this.parentNode.id) cacheKey = this.parentNode.id;          
           if (!cacheKey && (this.parentNode.nodeName && this.parentNode.nodeName != "#document-fragment")) cacheKey = this.parentNode.nodeName;
+          if (!cacheKey && (this.parentNode.domHost)) cacheKey = this.parentNode.domHost.nodeName;
         }
 
         // use compiled template if already cached
@@ -141,18 +140,12 @@
 
         } else {
 
-          // get template source
-          var src = this.innerHTML.trim();
-
-          // is content wrapped into <template> to allow nested components?
-          if (this.children.length == 1 && this.children[0].tagName == "TEMPLATE") {
-
+            // get template source
             var srctmpl = Polymer.dom(this).querySelector('template');
-            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+            var src = this._getNodesInnerHTML(srctmpl._content.childNodes);
             //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
 
-          }
-          if (!src) return null;
+            if (!src) return null;
 
           tmpl = Liquid.parse(src);
 
@@ -163,6 +156,8 @@
               compiledTemplate: tmpl
             }
           }
+
+          if (!!this._liquidTemplate && JSON.stringify(this._liquidTemplate) != JSON.stringify(tmpl)) debugger;
 
           // store compiled template also per node
           this._liquidTemplate = tmpl;
