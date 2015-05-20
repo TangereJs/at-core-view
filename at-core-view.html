@@ -37,6 +37,7 @@
           var tmpl = this._getCompiledTemplate();
           if (!tmpl) return;
 
+          tmpl.assigns = {};  // initialize template data, this should probably happen in liquid.js .render() in the future
           var html = tmpl.render(this.model);
 
           // var parent = this.parentNode;
