@@ -40,18 +40,8 @@
           tmpl.assigns = {};  // initialize template data, this should probably happen in liquid.js .render() in the future
           var html = tmpl.render(this.model);
 
-          // var parent = this.parentNode;
-          //if (!!parent.domHost) parent = parent.domHost;
-
           var parent = Polymer.dom(this).getOwnerRoot().host;
 
-          /*
-          var template = document.createElement('template');
-          template.innerHTML = html;
-
-          var fragment = this.instanceTemplate(template);
-          Polymer.dom.appendChild(fragment, this.root);
-          */
           this.root.innerHTML = html;
 
           // -- parse appened code for list of on-* event bindings --
@@ -87,12 +77,22 @@
       },
 
       _findAnnotatedNode: function (root, annote) {
-        // recursively ascend tree until we hit root
-        var parent = annote.parent &&
-          Polymer.Annotations.findAnnotatedNode(root, annote.parent);
-        // unwind the stack, returning the indexed node at each level
-        return !parent ? root :
-          Polymer.Annotations._localSubTree(parent, root)[annote.index];
+ 
+		  // recursively ascend tree until we hit root
+		  var parent = annote.parent &&
+			Polymer.Annotations.findAnnotatedNode(root, annote.parent);
+		  // unwind the stack, returning the indexed node at each level
+		  if (parent) {
+			// note: marginally faster than indexing via childNodes 
+			// (http://jsperf.com/childnodes-lookup)
+			for (var n=parent.firstChild, i=0; n; n=n.nextSibling) {
+			  if (annote.index === i++) {
+				return n;
+			  }
+			}
+		  } else {
+			return root;
+		  }
       },
 
       _getNodesInnerHTML: function (nodes) {
