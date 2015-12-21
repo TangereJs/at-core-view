@@ -21,6 +21,11 @@
         'modelChanged(model.*)'
       ],
 
+      $meta: [{
+        title: "liquid template views",
+        playground: false
+      }],
+
       templateCache: {},
 
       created: function () {
@@ -37,7 +42,7 @@
           var tmpl = this._getCompiledTemplate();
           if (!tmpl) return;
 
-          tmpl.assigns = {};  // initialize template data, this should probably happen in liquid.js .render() in the future
+          tmpl.assigns = {}; // initialize template data, this should probably happen in liquid.js .render() in the future
           var html = tmpl.render(this.model);
 
           var parent = Polymer.dom(this).getOwnerRoot().host;
@@ -77,22 +82,22 @@
       },
 
       _findAnnotatedNode: function (root, annote) {
- 
-		  // recursively ascend tree until we hit root
-		  var parent = annote.parent &&
-			Polymer.Annotations.findAnnotatedNode(root, annote.parent);
-		  // unwind the stack, returning the indexed node at each level
-		  if (parent) {
-			// note: marginally faster than indexing via childNodes 
-			// (http://jsperf.com/childnodes-lookup)
-			for (var n=parent.firstChild, i=0; n; n=n.nextSibling) {
-			  if (annote.index === i++) {
-				return n;
-			  }
-			}
-		  } else {
-			return root;
-		  }
+
+        // recursively ascend tree until we hit root
+        var parent = annote.parent &&
+          Polymer.Annotations.findAnnotatedNode(root, annote.parent);
+        // unwind the stack, returning the indexed node at each level
+        if (parent) {
+          // note: marginally faster than indexing via childNodes 
+          // (http://jsperf.com/childnodes-lookup)
+          for (var n = parent.firstChild, i = 0; n; n = n.nextSibling) {
+            if (annote.index === i++) {
+              return n;
+            }
+          }
+        } else {
+          return root;
+        }
       },
 
       _getNodesInnerHTML: function (nodes) {
@@ -121,11 +126,12 @@
         // if cached - return compiled template for this node
         if (!!this._liquidTemplate) return this._liquidTemplate;
 
-        var cacheKey = "", cacheEntry;
+        var cacheKey = "",
+          cacheEntry;
         var tmpl = null;
 
         if (this.parentNode) {
-          if (this.parentNode.id) cacheKey = this.parentNode.id;          
+          if (this.parentNode.id) cacheKey = this.parentNode.id;
           if (!cacheKey && (this.parentNode.nodeName && this.parentNode.nodeName != "#document-fragment")) cacheKey = this.parentNode.nodeName;
           if (!cacheKey && (this.parentNode.domHost)) cacheKey = this.parentNode.domHost.nodeName;
         }
@@ -141,12 +147,12 @@
 
         } else {
 
-            // get template source
-            var srctmpl = Polymer.dom(this).querySelector('template');
-            var src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-            //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
+          // get template source
+          var srctmpl = Polymer.dom(this).querySelector('template');
+          var src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+          //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
 
-            if (!src) return null;
+          if (!src) return null;
 
           tmpl = Liquid.parse(src);
 
@@ -177,4 +183,3 @@
 
   })();
 </script>
-
