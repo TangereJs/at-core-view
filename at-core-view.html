@@ -57,9 +57,9 @@
           if (window.CustomElements && CustomElements.upgradeSubtree) {
             CustomElements.upgradeSubtree(this.root);
           }
-
+          
           // transform ShadyDom styles of innerHTML
-          if (!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is, true);
+          if (!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is, parent._scopeCssViaAttr);
 
 
           // -- create listeners on parent node for on-* events
