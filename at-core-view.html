@@ -1,6 +1,6 @@
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../liquid.js/liquid-import.html">
-
+<link rel="import" href="../at-theme/at-theme.html">
 
 <script>
   (function () {
@@ -9,7 +9,6 @@
     Polymer({
 
       is: 'at-core-view',
-      _scopeCssViaAttr: true,
       properties: {
         model: {
           value: null,
@@ -57,7 +56,7 @@
           if (window.CustomElements && CustomElements.upgradeSubtree) {
             CustomElements.upgradeSubtree(this.root);
           }
-          
+
           // transform ShadyDom styles of innerHTML
           if (!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is, parent._scopeCssViaAttr);
 
