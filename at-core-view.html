@@ -1,4 +1,4 @@
-<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../tangere/tangere.html">
 <link rel="import" href="../liquid.js/liquid-import.html">
 <link rel="import" href="../at-theme/at-theme.html">
 
@@ -41,10 +41,18 @@
           var tmpl = this._getCompiledTemplate();
           if (!tmpl) return;
 
-          tmpl.assigns = {}; // initialize template data, this should probably happen in liquid.js .render() in the future
-          var html = tmpl.render(this.model);
-
           var parent = Polymer.dom(this).getOwnerRoot().host;
+          this._parent = parent;          
+          
+          tmpl.assigns = {}; // initialize template data, this should probably happen in liquid.js .render() in the future
+          
+          // callback to localize
+          tmpl.i18nCallback = function() {            
+           var r =  this._parent.T.apply(this._parent,arguments);
+           return r;  
+          }.bind(this);
+          
+          var html = tmpl.render(this.model);      
 
           this.root.innerHTML = html;
 

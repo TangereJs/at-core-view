@@ -1,4 +1,5 @@
 <link rel="import" href="../tangere/tangere.html" />
+<link rel="import" href="../at-i18n/at-i18n-behavior.html">
 <link rel="import" href="at-core-view.html" />
 
 <dom-module id="my-element">
@@ -16,6 +17,7 @@
     <at-core-view id="template3" model="{{user}}">
       <template preserve-content>
         <br>Hello {{name.first}} {{name.last}} - Counter = {{counter}}
+        <br>{{ 'Hello [0] [1] - Counter = [2]' | t: name.first, name.last, counter }}
         <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
         <br>
       </template>
@@ -26,6 +28,7 @@
 <script>
   Polymer({
     is: "my-element",
+    behaviors: [ Tangere.behaviors.i18n ],
     properties: {
       hello: {
         type: String,
