@@ -15,23 +15,24 @@
         },
         value: {
           type: Object,
-          value: function () {
-            return {
-              items: [
-                {
-                  name: 'C-3PO'
-                },
-                {
-                  name: 'R2D2'
-                }
-            ]
-            };
-          },
+          value: null,
+          //value: function () {
+          //  return {
+          //    items: [
+          //      {
+          //        name: 'C-3PO'
+          //      },
+          //      {
+          //        name: 'R2D2'
+          //      }
+          //  ]
+          //  };
+          //},
           xtype: 'json'
         },
         view: {
           type: Object,
-          value: "{% for item in items %}\n{{ item.name }}\n{% endfor %}",
+          value: null, // "{% for item in items %}\n{{ item.name }}\n{% endfor %}",
           xtype: 'json'
         }
       },
@@ -59,6 +60,7 @@
       },
 
       render: function () {
+
         try {
 
           var tmpl = this._getCompiledTemplate();
@@ -151,7 +153,7 @@
       },
       _getCompiledTemplate: function () {
 
-        if (this.model == null) return; // model not yet initialized
+        if (!this.model && !this.value) return; // model not yet initialized
 
         // if cached - return compiled template for this node
         if (!!this._liquidTemplate) return this._liquidTemplate;
@@ -181,12 +183,12 @@
           var src = this.view; // start with view property
 
           // use inner template when provided 
-          if (!src) {
-            var srctmpl = Polymer.dom(this).querySelector('template');
-            if (!srctmpl) return null;
 
+          var srctmpl = Polymer.dom(this).querySelector('template');
+          if (!srctmpl && !src) return null;
+
+          if (srctmpl) {
             src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-            this.view = src;
             //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
           }
 
@@ -211,7 +213,6 @@
 
         return tmpl;
       }
-
 
 
     });
