@@ -7,22 +7,41 @@
     var templateCache = {};
 
     Polymer({
-
       is: 'at-core-view',
       properties: {
         model: {
-          value: null,
-          notify: true
+          type: Object,
+          value: null
+        },
+        value: {
+          type: Object,
+          value: function () {
+            return {
+              items: [
+                {
+                  name: 'C-3PO'
+                },
+                {
+                  name: 'R2D2'
+                }
+            ]
+            };
+          },
+          xtype: 'json'
+        },
+        view: {
+          type: Object,
+          value: "{% for item in items %}\n{{ item.name }}\n{% endfor %}",
+          xtype: 'json'
         }
       },
 
       observers: [
-        'modelChanged(model.*)'
+        'render(model.*,value.*,view)'
       ],
 
       $meta: [{
-        title: "liquid template views",
-        playground: false
+        title: "liquid template views"
       }],
 
       templateCache: {},
@@ -35,6 +54,10 @@
 
       },
 
+      actionListener: function (event) {
+
+      },
+
       render: function () {
         try {
 
@@ -42,17 +65,17 @@
           if (!tmpl) return;
 
           var parent = Polymer.dom(this).getOwnerRoot().host;
-          this._parent = parent;          
-          
+          this._parent = parent;
+
           tmpl.assigns = {}; // initialize template data, this should probably happen in liquid.js .render() in the future
-          
+
           // callback to localize
-          tmpl.i18nCallback = function() {            
-           var r =  this._parent.T.apply(this._parent,arguments);
-           return r;  
+          tmpl.i18nCallback = function () {
+            var r = this._parent.T.apply(this._parent, arguments);
+            return r;
           }.bind(this);
-          
-          var html = tmpl.render(this.model);      
+
+          var html = tmpl.render(this.value || this.model);
 
           this.root.innerHTML = html;
 
@@ -155,9 +178,17 @@
         } else {
 
           // get template source
-          var srctmpl = Polymer.dom(this).querySelector('template');
-          var src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-          //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
+          var src = this.view; // start with view property
+
+          // use inner template when provided 
+          if (!src) {
+            var srctmpl = Polymer.dom(this).querySelector('template');
+            if (!srctmpl) return null;
+
+            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+            this.view = src;
+            //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
+          }
 
           if (!src) return null;
 
@@ -179,12 +210,9 @@
         }
 
         return tmpl;
-      },
-
-
-      modelChanged: function () {
-        this.render();
       }
+
+
 
     });
 
