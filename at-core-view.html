@@ -31,9 +31,10 @@
           xtype: 'json'
         },
         view: {
-          type: Object,
+          type: String,
           value: null, // "{% for item in items %}\n{{ item.name }}\n{% endfor %}",
-          xtype: 'json'
+          xtype: 'code',
+          mode: "htmlmixed"
         }
       },
 
