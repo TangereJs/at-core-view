@@ -35,6 +35,10 @@
           value: null, // "{% for item in items %}\n{{ item.name }}\n{% endfor %}",
           xtype: 'code',
           mode: "liquid"
+        },
+        modelRoot: {
+          type: String,
+          value: ""
         }
       },
 
@@ -43,8 +47,11 @@
       ],
 
       $meta: [{
-        title: "liquid template views"
+        title: "Liquid View",
+        type: "element",
+        xtype: "at-core-view"
       }],
+
 
       templateCache: {},
 
@@ -56,8 +63,25 @@
 
       },
 
-      actionListener: function (event) {
+      _getObjPath: function (obj, path) {
 
+        if (!path) return obj;
+        var paths = path.split('.'), current = obj;
+
+        for (var i = 0; i < paths.length; ++i) {
+          if (current[paths[i]] == undefined) {
+            return undefined;
+          } else {
+            current = current[paths[i]];
+          }
+        }
+        return current;
+      },
+
+      actionListener: function (event) {
+        
+        this.value = this.modelRoot ? event.detail.model : event.detail.model.state;
+        
       },
 
       render: function () {
@@ -78,9 +102,13 @@
             return r;
           }.bind(this);
 
-          var html = tmpl.render(this.value || this.model);
+          var root = this.value || this.model;
+          if(this.modelRoot) root = this._getObjPath(root, this.modelRoot);
 
-          this.root.innerHTML = html;
+          var html = tmpl.render(root);
+
+          Polymer.dom(this.root).innerHTML = html;
+
 
           // -- parse appened code for list of on-* event bindings --
           var list = [];
@@ -156,18 +184,20 @@
 
         if (!this.model && !this.value) return; // model not yet initialized
 
-        // if cached - return compiled template for this node
-        if (!!this._liquidTemplate) return this._liquidTemplate;
+        // if cached & static view - return compiled template for this node
+        if (!!this._liquidTemplate && !this.view) return this._liquidTemplate;
 
-        var cacheKey = "",
-          cacheEntry;
+        var cacheKey = "", cacheEntry;
         var tmpl = null;
 
-        if (this.parentNode) {
+        if (this.parentNode && !this.view) {
           if (this.parentNode.id) cacheKey = this.parentNode.id;
           if (!cacheKey && (this.parentNode.nodeName && this.parentNode.nodeName != "#document-fragment")) cacheKey = this.parentNode.nodeName;
           if (!cacheKey && (this.parentNode.domHost)) cacheKey = this.parentNode.domHost.nodeName;
         }
+
+        // if we is property use view itself as cachekey
+        if (this.view) cacheKey = this.view;
 
         // use compiled template if already cached
         if (cacheKey) {
