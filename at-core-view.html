@@ -66,7 +66,8 @@
       _getObjPath: function (obj, path) {
 
         if (!path) return obj;
-        var paths = path.split('.'), current = obj;
+        var paths = path.split('.'),
+          current = obj;
 
         for (var i = 0; i < paths.length; ++i) {
           if (current[paths[i]] == undefined) {
@@ -79,17 +80,49 @@
       },
 
       actionListener: function (event) {
-        
+
         this.value = this.modelRoot ? event.detail.model : event.detail.model.state;
-        
+
       },
 
       render: function () {
 
-        try {
+        var tmpl = this._getCompiledTemplate();
+        if (!tmpl) return;
 
-          var tmpl = this._getCompiledTemplate();
-          if (!tmpl) return;
+        // render immediately if all custom elements are already loaded
+        if (tmpl.loaded) {
+          this._render(tmpl.compiledTemplate);
+          return;
+        }
+
+        // import all referenced custom elements, render template when imports are finished
+        this._pendingImports = tmpl.customElements.length;
+        this._tmpl = tmpl;
+
+        for (var i = 0; i < tmpl.customElements.length; i++) {
+
+          var el = tmpl.customElements[i];
+
+          el = "../" + el + "/" + el + ".html";
+
+          this.importHref(el, function (e) {
+            this._pendingImports--;
+
+            if (this._pendingImports < 1) {
+              this._tmpl.loaded = true;              
+              this._render(this._tmpl.compiledTemplate);
+            }
+          }, function (e) {
+            // loading error
+            console.log("import failed: " + e.target.href);
+          });
+        }
+      },
+
+      _render: function (tmpl) {
+
+        try {
 
           var parent = Polymer.dom(this).getOwnerRoot().host;
           this._parent = parent;
@@ -103,7 +136,7 @@
           }.bind(this);
 
           var root = this.value || this.model;
-          if(this.modelRoot) root = this._getObjPath(root, this.modelRoot);
+          if (this.modelRoot) root = this._getObjPath(root, this.modelRoot);
 
           var html = tmpl.render(root);
 
@@ -113,15 +146,6 @@
           // -- parse appened code for list of on-* event bindings --
           var list = [];
           Polymer.Annotations._parseNodeAnnotations(this.root, list);
-
-          // strange it seems to be required to manually trigger the upgrade?, probably because innerHTML was assigned directly
-          if (window.CustomElements && CustomElements.upgradeSubtree) {
-            CustomElements.upgradeSubtree(this.root);
-          }
-
-          // transform ShadyDom styles of innerHTML
-          if (!Polymer.Settings.useShadow) Polymer.StyleTransformer.dom(this.root, parent.is, parent._scopeCssViaAttr);
-
 
           // -- create listeners on parent node for on-* events
           list.forEach(function (a) {
@@ -187,7 +211,8 @@
         // if cached & static view - return compiled template for this node
         if (!!this._liquidTemplate && !this.view) return this._liquidTemplate;
 
-        var cacheKey = "", cacheEntry;
+        var cacheKey = "",
+          cacheEntry;
         var tmpl = null;
 
         if (this.parentNode && !this.view) {
@@ -202,45 +227,77 @@
         // use compiled template if already cached
         if (cacheKey) {
           cacheEntry = this.templateCache[cacheKey];
+          if (cacheEntry) {
+            return cacheEntry;
+          }
         }
 
-        if (cacheEntry && cacheKey) {
+        // get template source
+        var src = this.view; // start with view property
 
-          tmpl = cacheEntry.compiledTemplate;
+        // use inner template when provided 
 
-        } else {
+        var srctmpl = Polymer.dom(this).querySelector('template');
+        if (!srctmpl && !src) return null;
 
-          // get template source
-          var src = this.view; // start with view property
-
-          // use inner template when provided 
-
-          var srctmpl = Polymer.dom(this).querySelector('template');
-          if (!srctmpl && !src) return null;
-
-          if (srctmpl) {
-            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-            //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
-          }
-
-          if (!src) return null;
-
-          tmpl = Liquid.parse(src);
-
-          // store compiled template for parent element in cache
-          if (cacheKey) {
-            this.templateCache[cacheKey] = {
-              template: src,
-              compiledTemplate: tmpl
-            }
-          }
-
-          if (!!this._liquidTemplate && JSON.stringify(this._liquidTemplate) != JSON.stringify(tmpl)) debugger;
-
-          // store compiled template also per node
-          this._liquidTemplate = tmpl;
-
+        if (srctmpl) {
+          src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+          //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
         }
+
+        if (!src) return null;
+
+        // use template as cacheKey if we don't have a key yet
+        if (!cacheKey) {
+          cacheKey = src;
+          cacheEntry = this.templateCache[cacheKey];
+          if (cacheEntry) {
+            return cacheEntry;
+          }
+        }
+
+        
+        tmpl = Liquid.parse(src);
+
+        var elPattern = /<\w+-\w+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
+        var ctags = src.match(elPattern);
+        var ces = {},
+          p0 = 0,
+          p1 = 0;
+
+        // convert <a-b> <a-b checked> to distinct list of custom elment names
+        for (var i = 0; i < ctags.length; i++) {
+          var tag = ctags[i];
+          p0 = tag.indexOf(">");
+          p1 = tag.indexOf(" ");
+
+          if (p1 >= 0) p0 = p1;
+
+          tag = tag.substr(1, p0 - 1);
+
+          ces[tag] = true;
+        }
+
+        ces = Object.getOwnPropertyNames(ces);
+
+        tmpl = {
+          template: src,
+          compiledTemplate: tmpl,
+          customElements: ces,
+          loaded: ces.length == 0
+        };
+
+        // store compiled template for parent element in cache
+        if (cacheKey) {
+          this.templateCache[cacheKey] = tmpl;
+        }
+
+        if (!!this._liquidTemplate && JSON.stringify(this._liquidTemplate) != JSON.stringify(tmpl)) debugger;
+
+        // store compiled template also per node
+        this._liquidTemplate = tmpl;
+
+
 
         return tmpl;
       }

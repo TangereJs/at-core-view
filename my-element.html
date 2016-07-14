@@ -1,5 +1,6 @@
 <link rel="import" href="../tangere/tangere.html" />
 <link rel="import" href="../at-i18n/at-i18n-behavior.html">
+
 <link rel="import" href="at-core-view.html" />
 
 <dom-module id="my-element">
@@ -20,6 +21,8 @@
         <br>{{ 'Hello [0] [1] - Counter = [2]' | t: name.first, name.last, counter }}
         <br>inner template: <a on-click='clickhandler' class="red">Click me inner </a> 
         <br>
+        <paper-checkbox></paper-checkbox>
+        <paper-checkbox checked></paper-checkbox>
       </template>
     </at-core-view>
   </template>
