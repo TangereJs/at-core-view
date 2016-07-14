@@ -110,7 +110,7 @@
             this._pendingImports--;
 
             if (this._pendingImports < 1) {
-              this._tmpl.loaded = true;              
+              this._tmpl.loaded = true;
               this._render(this._tmpl.compiledTemplate);
             }
           }, function (e) {
@@ -214,7 +214,7 @@
         var cacheKey = "",
           cacheEntry;
         var tmpl = null;
-        
+
         // if we is property use view itself as cachekey
         if (this.view) cacheKey = this.view;
 
@@ -230,16 +230,17 @@
         var src = this.view; // start with view property
 
         // use inner template when provided 
-        if(!src) {
-        var srctmpl = Polymer.dom(this).querySelector('template');
-        if (!srctmpl && !src) return null;
+        if (!src) {
+          var srctmpl = Polymer.dom(this).querySelector('template');
+          if (!srctmpl && !src) return null;
 
-        if (srctmpl) {
-          src = this._getNodesInnerHTML(srctmpl._content.childNodes);
-          //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
-          this.view = src; // save initial static template, triggers observer
-          return null;
-        }}
+          if (srctmpl) {
+            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+            //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
+            this.view = src; // save initial static template, triggers observer
+            return null;
+          }
+        }
 
         if (!src) return null;
 
@@ -252,7 +253,7 @@
           }
         }
 
-        
+
         tmpl = Liquid.parse(src);
 
         var elPattern = /<\w+-\w+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
@@ -262,16 +263,18 @@
           p1 = 0;
 
         // convert <a-b> <a-b checked> to distinct list of custom elment names
-        for (var i = 0; i < ctags.length; i++) {
-          var tag = ctags[i];
-          p0 = tag.indexOf(">");
-          p1 = tag.indexOf(" ");
+        if (ctags != null) {
+          for (var i = 0; i < ctags.length; i++) {
+            var tag = ctags[i];
+            p0 = tag.indexOf(">");
+            p1 = tag.indexOf(" ");
 
-          if (p1 >= 0) p0 = p1;
+            if (p1 >= 0) p0 = p1;
 
-          tag = tag.substr(1, p0 - 1);
+            tag = tag.substr(1, p0 - 1);
 
-          ces[tag] = true;
+            ces[tag] = true;
+          }
         }
 
         ces = Object.getOwnPropertyNames(ces);
