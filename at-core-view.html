@@ -214,13 +214,7 @@
         var cacheKey = "",
           cacheEntry;
         var tmpl = null;
-
-        if (this.parentNode && !this.view) {
-          if (this.parentNode.id) cacheKey = this.parentNode.id;
-          if (!cacheKey && (this.parentNode.nodeName && this.parentNode.nodeName != "#document-fragment")) cacheKey = this.parentNode.nodeName;
-          if (!cacheKey && (this.parentNode.domHost)) cacheKey = this.parentNode.domHost.nodeName;
-        }
-
+        
         // if we is property use view itself as cachekey
         if (this.view) cacheKey = this.view;
 
@@ -236,14 +230,16 @@
         var src = this.view; // start with view property
 
         // use inner template when provided 
-
+        if(!src) {
         var srctmpl = Polymer.dom(this).querySelector('template');
         if (!srctmpl && !src) return null;
 
         if (srctmpl) {
           src = this._getNodesInnerHTML(srctmpl._content.childNodes);
           //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
-        }
+          this.view = src; // save initial static template, triggers observer
+          return null;
+        }}
 
         if (!src) return null;
 
