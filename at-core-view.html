@@ -104,9 +104,15 @@
         for (var i = 0; i < tmpl.customElements.length; i++) {
 
           var el = tmpl.customElements[i];
+          var compUrl = document.baseURI.indexOf("/components/") >= 0 ? "../" : "components/";
 
-          el = "../" + el + "/" + el + ".html";
+          if (document.URL.indexOf("/elements/designer-element/") >= 0) {
+            compUrl = "/components/";
+          }
 
+          if (window.ComponentsBase != undefined) compUrl = window.ComponentsBase;
+          el = compUrl + el + "/" + el + ".html";
+          
           this.importHref(el, function (e) {
             this._pendingImports--;
 
