@@ -87,6 +87,7 @@
 
       render: function () {
 
+
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) return;
 
@@ -124,8 +125,11 @@
 
         try {
 
-          var parent = Polymer.dom(this).getOwnerRoot().host;
-          this._parent = parent;
+          this._parent = null;
+
+          if (Polymer.dom(this).getOwnerRoot() != null) {
+            this._parent = Polymer.dom(this).getOwnerRoot().host;
+          }
 
           tmpl.assigns = {}; // initialize template data, this should probably happen in liquid.js .render() in the future
 
@@ -143,19 +147,22 @@
           Polymer.dom(this.root).innerHTML = html;
 
 
-          // -- parse appened code for list of on-* event bindings --
-          var list = [];
-          Polymer.Annotations._parseNodeAnnotations(this.root, list);
+          if (this._parent) {
+            // -- parse appened code for list of on-* event bindings for parent --    
+            var list = [];
+            Polymer.Annotations._parseNodeAnnotations(this.root, list);
 
-          // -- create listeners on parent node for on-* events
-          list.forEach(function (a) {
-            if (a.events && a.events.length) {
-              var node = this._findAnnotatedNode(this.root, a);
-              a.events.forEach(function (e) {
-                parent.listen(node, e.name, e.value);
-              }, this);
-            }
-          }, this);
+            // -- create listeners on parent node for on-* events
+            list.forEach(function (a) {
+              if (a.events && a.events.length) {
+                var node = this._findAnnotatedNode(this.root, a);
+                a.events.forEach(function (e) {
+                  this._parent.listen(node, e.name, e.value);
+                }, this);
+              }
+            }, this);
+          }
+
 
         } catch (ex) {
           var em = 'Exception caught at-core-view.render: ' + (ex.stack || ex);
@@ -256,7 +263,7 @@
 
         tmpl = Liquid.parse(src);
 
-        var elPattern = /<\w+-\w+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
+        var elPattern = /<\w+-[a-z0-9\-]+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
         var ctags = src.match(elPattern);
         var ces = {},
           p0 = 0,
