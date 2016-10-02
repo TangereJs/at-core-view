@@ -88,7 +88,6 @@
 
       render: function () {
 
-
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) return;
 
@@ -105,7 +104,8 @@
         for (var i = 0; i < tmpl.customElements.length; i++) {
 
           var el = tmpl.customElements[i];
-          var compUrl = document.baseURI.indexOf("/components/") >= 0 ? "../" : "components/";
+          
+          var compUrl = document.baseURI.indexOf("/components/") >= 0 ? "/components/" : "components/";
 
           if (document.URL.indexOf("/elements/designer-element/") >= 0) {
             compUrl = "/components/";
@@ -305,12 +305,8 @@
           this.templateCache[cacheKey] = tmpl;
         }
 
-        if (!!this._liquidTemplate && JSON.stringify(this._liquidTemplate) != JSON.stringify(tmpl)) debugger;
-
         // store compiled template also per node
         this._liquidTemplate = tmpl;
-
-
 
         return tmpl;
       }
