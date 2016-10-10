@@ -1,0 +1,39 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width" />
+  <title>at-core-view demo</title>
+  <script src="../webcomponentsjs/webcomponents-lite.min.js"></script>
+  <link rel="import" href="../tangere/tangere.html" />
+  <link rel="import" href="../at-core-style-classes/at-core-style-classes.html" />
+  <link rel="import" href="at-core-view.html" />
+</head>
+
+<body>
+  <div id="container"></div>
+  <script>
+    document.addEventListener('WebComponentsReady', function (e) {
+
+      var container = document.getElementById('container');
+
+      var item = document.createElement("at-core-view");
+
+      var user = {
+        name: {
+          first: 'James',
+          last: 'Cook',
+        }
+      };
+
+      var view = "<b>Hello</b> {{name.first}} {{name.last}}";
+
+      item.view = view;
+      item.value = user;
+      
+      container.appendChild(item);
+
+    });
+  </script>
+</body>
+
+</html>
