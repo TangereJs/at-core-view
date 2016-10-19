@@ -49,8 +49,7 @@
       $meta: [{
         title: "Liquid View",
         type: "element",
-        xtype: "at-core-view",
-        invisible: true
+        xtype: "at-core-view"
       }],
 
 
@@ -58,6 +57,10 @@
 
       created: function () {
         this.templateCache = templateCache;
+      },
+
+      attached: function() {
+        this.render();  
       },
 
       ready: function () {
@@ -83,10 +86,12 @@
       actionListener: function (event) {
 
         this.value = this.modelRoot ? event.detail.model : event.detail.model.state;
-
+       
       },
 
       render: function () {
+        
+        if (!this.parentNode) return;  // we can't render without parentNode as the parentNode provides the style scope
 
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) return;
@@ -215,12 +220,10 @@
 
         return html;
       },
-      created: function () {
 
-      },
       _getCompiledTemplate: function () {
 
-        if (!this.model && !this.value) return; // model not yet initialized
+        // combined observer should ensure that both all props are set if (!this.model && !this.value) return; // model not yet initialized
 
         // if cached & static view - return compiled template for this node
         if (!!this._liquidTemplate && !this.view) return this._liquidTemplate;
