@@ -28,12 +28,14 @@
           //  ]
           //  };
           //},
+          xgridcols: "12",
           xtype: 'json'
         },
         view: {
           type: String,
           value: null, // "{% for item in items %}\n{{ item.name }}\n{% endfor %}",
           xtype: 'code',
+          xgridcols: "12",
           mode: "liquid"
         },
         modelRoot: {
@@ -60,7 +62,7 @@
       },
 
       attached: function() {
-        this.render();  
+        if(!this._isRendered) this.render();  
       },
 
       ready: function () {
@@ -95,6 +97,8 @@
 
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) return;
+
+        this._isRendered = true;
 
         // render immediately if all custom elements are already loaded
         if (tmpl.loaded) {

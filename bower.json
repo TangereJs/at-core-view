@@ -1,7 +1,7 @@
 {
   "name": "at-core-view",
   "private": true,
-  "version": "1.0.0.32",
+  "version": "1.0.0.35",
   "dependencies": {
     "polymer": "Polymer/polymer#0.8-preview",
     "liquid.js": "TangereJs/liquid.js#master"
