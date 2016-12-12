@@ -134,7 +134,7 @@
           }, function (e) {
             // loading error
             console.log("import failed: " + e.target.href);
-          });
+          }, true);
         }
       },
 
@@ -152,6 +152,7 @@
 
           // callback to localize
           tmpl.i18nCallback = function () {
+            if (this._parent.T === undefined) return arguments[0]; // no T() available, return untranslated text
             var r = this._parent.T.apply(this._parent, arguments);
             return r;
           }.bind(this);
