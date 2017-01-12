@@ -3,7 +3,11 @@
   "private": true,
   "version": "1.0.0.38",
   "dependencies": {
-    "polymer": "Polymer/polymer#0.8-preview",
-    "liquid.js": "TangereJs/liquid.js#master"
+    "tangere": "TangereJs/tangere#0.8-preview",
+    "liquid.js": "TangereJs/liquid.js#master",
+    "at-theme": "TangereJs/at-theme#0.8-preview",
+    "at-doc-viewer": "TangereJs/at-doc-viewer#0.8-preview",
+    "at-core-style-classes": "TangereJs/at-core-style-classes#0.8-preview",
+    "at-i18n": "TangereJs/at-i18n#0.8-preview"
   }
 }
