@@ -122,7 +122,9 @@
           }
 
           if (window.ComponentsBase != undefined) compUrl = window.ComponentsBase;
-          el = compUrl + el + "/" + el + ".html";
+
+          if (el.indexOf("/") < 0) el = el + "/" + el;
+          el = compUrl + el + ".html";
           
           this.importHref(el, function (e) {
             this._pendingImports--;
@@ -133,7 +135,11 @@
             }
           }, function (e) {
             // loading error
-            console.log("import failed: " + e.target.href);
+            var em = "import failed: " + e.target.href;           
+            console.log(em);
+            var emdiv = document.createElement('div');
+            emdiv.innerHTML = em;            
+            Polymer.dom(this.root).appendChild(emdiv);
           }, true);
         }
       },
@@ -300,7 +306,48 @@
           }
         }
 
+        // resolve relative tag names like <default.view
+        var cex = {};
+        var elName = "";
+
+        elPattern = /<\w+\.[a-z0-9\-]+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
+        src = src.replace(elPattern,function(tag) {
+          p0 = tag.indexOf(">");
+          p1 = tag.indexOf(" ");
+          if (p1 >= 0) p0 = p1;
+
+          elName = tag.substr(1, p0 - 1);
+
+          var elNameOrg = elName;
+          var resolve = { namePrefix: "" };
+          this.fire("resolve-name-prefix", resolve);
+          var prefix = resolve.namePrefix;
+
+          if (elName == "default.view") elName = "";
+          elName = elName.replace("default.", "");
+          elName = prefix + (elName ? ("-" + elName.replace(".", "-")) : "");
+          cex[elNameOrg] = { rel: elNameOrg, folder: prefix, el: elName };
+
+          tag = "<" + elName + tag.substr(p0);
+          
+          return tag;
+
+        }.bind(this));
+
         ces = Object.getOwnPropertyNames(ces);
+
+        var cexc = Object.getOwnPropertyNames(cex);
+        for (var i = 0; i < cexc.length; i++) {
+          el = cex[cexc[i]];
+         
+          // replace closing tag
+          src = src.split("</" + el.rel + ">").join("</" + el.el + ">");
+
+          // save expanded name to list of elements to import
+          ces.push(el.folder + "/" + el.el);
+
+        }
+    
 
         tmpl = {
           template: src,
