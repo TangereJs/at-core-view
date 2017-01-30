@@ -38,6 +38,13 @@
           xgridcols: "12",
           mode: "liquid"
         },
+        placeholder: {
+          type: String,
+          value: "<div class='m'> <div class='background-lightGrey' style='height:14px'></div><div class='background-lightGrey mtsm' style='height:14px'></div></div>",
+          xtype: 'code',
+          xgridcols: "12",
+          mode: "html"
+        },
         modelRoot: {
           type: String,
           value: ""
@@ -96,16 +103,25 @@
         
         if (!this.parentNode) return;  // we can't render without parentNode as the parentNode provides the style scope
 
+        Polymer.signal("busy-start");
+        if (this.placeholder) Polymer.dom(this).innerHTML = this.placeholder;
+
         var tmpl = this._getCompiledTemplate();
-        if (!tmpl) return;
+        if (!tmpl) {
+          Polymer.signal("busy-end");
+          return;
+        }
 
         this._isRendered = true;
 
         // render immediately if all custom elements are already loaded
         if (tmpl.loaded) {
-          this._render(tmpl.compiledTemplate);
+          this._render(tmpl.compiledTemplate);          
           return;
         }
+
+        //Polymer.dom(this).innerHTML = "";
+
 
         // import all referenced custom elements, render template when imports are finished
         this._pendingImports = tmpl.customElements.length;
@@ -187,6 +203,8 @@
             }, this);
           }
 
+          this.fire('content-changed', this, { bubbles: true });
+          Polymer.signal("busy-end");
 
         } catch (ex) {
           var em = 'Exception caught at-core-view.render: ' + (ex.stack || ex);
