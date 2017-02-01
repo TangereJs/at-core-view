@@ -1,6 +1,5 @@
 <link rel="import" href="../tangere/tangere.html">
 <link rel="import" href="../liquid.js/liquid-import.html">
-<link rel="import" href="../at-core-signals/at-core-signals.html">
 <link rel="import" href="../at-theme/at-theme.html">
 
 <script>
@@ -103,13 +102,12 @@
       render: function () {
         
         if (!this.parentNode) return;  // we can't render without parentNode as the parentNode provides the style scope
-
-        Polymer.signal("busy-start");
+        
         if (this.placeholder) Polymer.dom(this).innerHTML = this.placeholder;
 
+        
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) {
-          Polymer.signal("busy-end");
           return;
         }
 
@@ -205,7 +203,6 @@
           }
 
           this.fire('content-changed', this, { bubbles: true });
-          Polymer.signal("busy-end");
 
         } catch (ex) {
           var em = 'Exception caught at-core-view.render: ' + (ex.stack || ex);
