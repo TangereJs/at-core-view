@@ -130,7 +130,7 @@
 
           var el = tmpl.customElements[i];
           
-          var compUrl = document.baseURI.indexOf("/components/") >= 0 ? "/components/" : "components/";
+          var compUrl = this.resolveUrl("../");
 
           if (document.URL.indexOf("/elements/designer-element/") >= 0) {
             compUrl = "/components/";
