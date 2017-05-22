@@ -198,20 +198,25 @@
           Polymer.dom(this.root).innerHTML = html;
 
 
-          if (this._parent) {
+          if (this._parent && html.indexOf("{{")>=0) {
             // -- parse appened code for list of on-* event bindings for parent --    
             var list = [];
-            Polymer.Annotations._parseNodeAnnotations(this.root, list);
+            
+            if(!Polymer.Annotations) {
+              console.log("FIXME Polymer.Annotations");
+            } else {
+              Polymer.Annotations._parseNodeAnnotations(this.root, list);
 
-            // -- create listeners on parent node for on-* events
-            list.forEach(function (a) {
-              if (a.events && a.events.length) {
-                var node = this._findAnnotatedNode(this.root, a);
-                a.events.forEach(function (e) {
-                  this._parent.listen(node, e.name, e.value);
-                }, this);
-              }
-            }, this);
+              // -- create listeners on parent node for on-* events
+              list.forEach(function (a) {
+                if (a.events && a.events.length) {
+                  var node = this._findAnnotatedNode(this.root, a);
+                  a.events.forEach(function (e) {
+                    this._parent.listen(node, e.name, e.value);
+                  }, this);
+                }
+              }, this);
+            }
           }
 
           this.fire('content-changed', this, { bubbles: true });
