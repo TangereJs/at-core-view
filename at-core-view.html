@@ -198,7 +198,7 @@
           Polymer.dom(this.root).innerHTML = html;
 
 
-          if (this._parent && html.indexOf("{{")>=0) {
+          if (this._parent) {
             // -- parse appened code for list of on-* event bindings for parent --    
             var list = [];
             
