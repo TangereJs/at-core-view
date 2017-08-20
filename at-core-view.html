@@ -106,13 +106,15 @@
       render: function () {
         
         if (!this.parentNode) return;  // we can't render without parentNode as the parentNode provides the style scope
-        
-        if (this.placeholder) Polymer.dom(this).innerHTML = this.placeholder;
+
+        if (this.placeholder && this.view) Polymer.dom(this).innerHTML = this.placeholder;
+        Polymer.dom.flush();
 
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) {
           return;
         }
+
 
         this._isRendered = true;
 
@@ -174,6 +176,7 @@
         }
         return Polymer.ResolveUrl.resolveUrl(url, root);
       },
+
       _render: function (tmpl) {
 
         try {
@@ -199,8 +202,8 @@
           var html = tmpl.render(root);
 
           Polymer.dom(this.root).innerHTML = html;
-
-
+          Polymer.dom.flush();
+          
           if (this._parent) {
             // -- parse appened code for list of on-* event bindings for parent --    
             var list = [];

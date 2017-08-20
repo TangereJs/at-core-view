@@ -1,7 +1,7 @@
 {
   "name": "at-core-view",
   "private": true,
-  "version": "1.0.0.114",
+  "version": "1.0.0.129",
   "dependencies": {
     "tangere": "TangereJs/tangere#master",
     "liquid.js": "TangereJs/liquid.js#master",
