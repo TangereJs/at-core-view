@@ -56,7 +56,7 @@
       },
 
       observers: [
-        'render(model.*,value.*,view)'
+        'render(model.*,value.*,view,placeholder)'
       ],
 
       $meta: [{
@@ -109,7 +109,6 @@
         
         if (this.placeholder) Polymer.dom(this).innerHTML = this.placeholder;
 
-        
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) {
           return;
@@ -141,6 +140,10 @@
           }
 
           if (window.ComponentsBase != undefined) compUrl = window.ComponentsBase;
+
+          // import default.card by stripping -card from folder name
+          var elf = el;
+          if (elf.indexOf("-card") > 0 && elf.substring(elf.length - 5) == "-card") elf = elf.substring(0, elf.length - 5);
 
           if (el.indexOf("/") < 0) el = el + "/" + el;
           el = compUrl + el + ".html";
