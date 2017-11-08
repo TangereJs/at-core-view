@@ -8,7 +8,7 @@
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../../at-theme/at-theme.html">
-  <link rel="import" href="set-dom-demo.html">
+  <link rel="import" href="../test-setdom.html">
   
   <style is="custom-style">
     
@@ -16,11 +16,12 @@
 </head>
 
 <body>
-  <set-dom-demo></set-dom-demo>
+  <test-setdom id="a"></test-setdom>
   
   <script>
     document.addEventListener('WebComponentsReady', function() {
-      
+      var a = document.getElementById('a');
+      a.html = '<span id="first" class="class1">aaa</span>';
     });
   </script>
 </body>

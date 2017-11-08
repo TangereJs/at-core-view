@@ -1,0 +1,73 @@
+<link rel="import" href="../tangere/tangere.html" />
+<link rel="import" href="../at-theme/at-theme.html" />
+<link rel="import" href="../at-core-style-classes/at-core-style-classes.html" />
+
+<script src="lib/set-dom.js"></script>
+
+<dom-module id="test-setdom">
+  <template>
+    <style include="at-core-style-classes">
+      :host {
+        display: block;
+        box-sizing: border-box;
+
+        margin: 4px;
+        padding: 4px;
+        border: 1px solid purple;
+      }
+
+      .sd-column {
+        margin: 4px;
+        padding: 4px;
+        border: 1px solid purple;
+      }
+    </style>
+      
+    <div class="layout-horizontal">
+      <div id="innerHtmlContainer" class="sd-column flex"></div>
+      <div id="setdomContainer" class="sd-column flex"><div></div></div>
+    </div>
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "test-setdom",
+    properties: {
+      html: {
+        type: String,
+        value: '',
+        observer: '_htmlChanged'
+      }
+    },
+
+    ready: function () {
+
+    },
+
+    _htmlChanged: function(newValue, oldValue) {
+      if (!newValue) return;
+
+      // set the innerHTML to be used as the expected values
+      Polymer.dom(this.$.innerHtmlContainer).innerHTML = newValue;
+
+      // use the setDom to set the html to be used as actual values
+      var stPlaceholder = Polymer.dom(this.$.setdomContainer).firstChild;
+      // we need placeholder because setDOM replaces it with newValue
+      setDOM(stPlaceholder, newValue);
+      // setDom doesn't operate on the localDOM
+      var unscopedElements = Polymer.dom(this.$.setdomContainer).childNodes;
+      unscopedElements.forEach(function(node) { 
+        this.scopeSubtree(node);
+      }, this);
+    },
+
+    get innerHtmlChildNodes() {
+      return Polymer.dom(this.$.innerHtmlContainer).childNodes;
+    },
+
+    get setdomChildNodes() {
+      return Polymer.dom(this.$.setdomContainer).childNodes;
+    }
+  });
+</script>
