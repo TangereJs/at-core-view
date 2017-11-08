@@ -220,6 +220,7 @@
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
           });
 
+          var sdContFCBefore = Polymer.dom(sdCont).firstChild;
 
           elt.html = '<span id="first">bbb</span>';
 
@@ -237,7 +238,10 @@
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
           });
-          
+
+          var sdContFCAfter = Polymer.dom(sdCont).firstChild;
+          var eq = sdContFCAfter.isSameNode(sdContFCBefore);
+          assert.equal(eq, true);
         });
 
         test('test 2', function() {
@@ -262,6 +266,8 @@
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
           });
 
+          var sdContFCBefore = Polymer.dom(sdCont).firstChild;
+
           elt.html = '<span id="first">aaa<span id="second">222</span></span>';
 
           // repeat tests
@@ -279,6 +285,9 @@
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
           });
           
+          var sdContFCAfter = Polymer.dom(sdCont).firstChild;
+          var eq = sdContFCAfter.isSameNode(sdContFCBefore);
+          assert.equal(eq, true);
         });
 
 
