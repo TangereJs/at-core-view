@@ -8,6 +8,7 @@
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
     <link rel="import" href="../test-setdom.html">
+    <link rel="import" href="../../at-form-text/at-form-text.html" />
     <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
   </head>
 
@@ -290,7 +291,109 @@
           assert.equal(eq, true);
         });
 
+        test('test 3', function() {
+          var elt = fixture('tests');
 
+          elt.html = '<div><input type="text" id="input1"/><div>bbb</div></div>';
+
+          var sdCont = elt.$.setdomContainer;
+          var ihCont = elt.$.innerHtmlContainer;
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = elt.innerHtmlChildNodes;
+          var actualNodes = elt.setdomChildNodes;
+
+          actualNodes.forEach(function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+
+          // set placeholder
+          var sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
+          Polymer.dom(sdInputRefBefore).setAttribute('placeholder', 'lorem ipsum');
+
+          elt.html = '<div><input type="text" id="input1"/><div>ccc</div></div>';
+
+          // repeat tests
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = elt.innerHtmlChildNodes;
+          var actualNodes = elt.setdomChildNodes;
+
+          actualNodes.forEach(function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+          
+          // query placeholder
+          var sdInputRefAfter = Polymer.dom(sdCont).querySelector('#input1');
+          var placeholderVal = sdInputRefAfter.getAttribute('placeholder');
+
+          var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
+          assert.equal(eq, true);
+
+          assert.equal(placeholderVal, 'lorem ipsum');
+        });
+
+        test('test 4', function() {
+          var elt = fixture('tests');
+
+          elt.html = '<at-form-text id="input1"></at-form-text>';
+
+          var sdCont = elt.$.setdomContainer;
+          var ihCont = elt.$.innerHtmlContainer;
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = elt.innerHtmlChildNodes;
+          var actualNodes = elt.setdomChildNodes;
+
+          actualNodes.forEach(function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+
+          // set placeholder
+          var sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
+          sdInputRefBefore._abc = 'abc';
+
+          elt.html = '<at-form-text id="input1"></at-form-text>';
+
+          // repeat tests
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = elt.innerHtmlChildNodes;
+          var actualNodes = elt.setdomChildNodes;
+
+          actualNodes.forEach(function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+          
+          // query placeholder
+          var sdInputRefAfter = Polymer.dom(sdCont).querySelector('#input1');
+          var abcVal = sdInputRefAfter._abc;
+
+          var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
+          assert.equal(eq, true);
+
+          assert.equal(abcVal, 'abc');
+        });
 
       });
 
