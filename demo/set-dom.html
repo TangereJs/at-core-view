@@ -9,6 +9,7 @@
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../../at-theme/at-theme.html">
   <link rel="import" href="../test-setdom.html">
+  <link rel="import" href="../../at-form-text/at-form-text.html" />
   
   <style is="custom-style">
     
@@ -21,7 +22,10 @@
   <script>
     document.addEventListener('WebComponentsReady', function() {
       var a = document.getElementById('a');
-      a.html = '<span id="first" class="class1">aaa</span>';
+      // a.html = '<span id="first" class="class1">aaa</span>';
+      a.html = '<div><at-form-text label="lorem"></at-form-text></div>';
+      a.html = '<div><at-form-text label="lorem ipsum"></at-form-text></div>';
+      a.html = '<div><at-form-text label="lorem ipsum 123"></at-form-text></div>';
     });
   </script>
 </body>

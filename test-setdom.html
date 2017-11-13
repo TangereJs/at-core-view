@@ -54,13 +54,64 @@
       // use the setDom to set the html to be used as actual values
       var stPlaceholder = Polymer.dom(this.$.setdomContainer).firstChild;
       // we need placeholder because setDOM replaces it with newValue
-      setDOM(stPlaceholder, newValue);
+
+      var div = document.createElement('div');
+      Polymer.dom(div).innerHTML = newValue;
+
+      setDOM(stPlaceholder, div.firstChild);
       // setDom doesn't operate on the localDOM
       var unscopedElements = Polymer.dom(this.$.setdomContainer).childNodes;
       unscopedElements.forEach(function(node) { 
         this.scopeSubtree(node);
       }, this);
+
+      // scopeSubtree adds style-scope without a check if it already exists
+      // we walk unscopedElements and remove style-scope if it exists more than once
+      // There is a bug in scopeSubtree function where it will walk an elements shadyRoot and apply style-scope if parent element, which is a bug
+      // we want to remove style-scoping only from polymerjs elements shadyDOM only. We can identify such element by having a shadyDom property
+      // var thisEltName = this.is;
+      // unscopedElements.forEach(function(node) { 
+      //   this._removeDuplicateStyleScoping(node, thisEltName);
+      // }, this);
     },
+
+    // _removeDuplicateStyleScoping: function(element, styleScopeClass) {
+    //   // if element doesn't have classList property return
+    //   if (!element.classList) return;
+
+    //   var count = this._computeClassNameCount(element.classList, 'style-scope');
+    //   if (count > 1) {
+    //     // TODO(ij): Not enough, remove will remove first occurence not last. I need last removed
+    //     element.classList.remove('style-scope');
+    //     // removing prent element's name is not an issue since it will be last anyway
+    //     element.classList.remove(styleScopeClass);
+    //   }
+
+    //   var childNodes = [];
+    //   if (element.root) {
+    //     childNodes = Polymer.dom(element.root).childNodes;
+      
+    //   } else {
+    //     childNodes = element.childNodes;
+    //   }
+
+    //   if (!childNodes.length) return;
+
+    //   childNodes.forEach(function(node){ 
+    //     this._removeDuplicateStyleScoping(node, styleScopeClass);
+    //   }, this);
+
+    //   // if shadowDOM is used we do not have this issue
+    // },
+
+    // _computeClassNameCount: function(classList, className) {
+    //   var count = 0;
+    //   for (var i=0; i<classList.length; i++) {
+    //     var currName = classList[i];
+    //     if (currName === className) count++;
+    //   }
+    //   return count;
+    // },
 
     get innerHtmlChildNodes() {
       return Polymer.dom(this.$.innerHtmlContainer).childNodes;

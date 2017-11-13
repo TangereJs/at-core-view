@@ -252,7 +252,6 @@
 
           var sdCont = elt.$.setdomContainer;
           var ihCont = elt.$.innerHtmlContainer;
-
           assertPdChildrenEquals(sdCont, ihCont);
           assertPdChildNodesEquals(sdCont, ihCont);
           assertPdInnerHTMLEquals(sdCont, ihCont);
@@ -340,16 +339,17 @@
           var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
           assert.equal(eq, true);
 
-          assert.equal(placeholderVal, 'lorem ipsum');
+          assert.equal(placeholderVal, null);
         });
 
         test('test 4', function() {
           var elt = fixture('tests');
 
-          elt.html = '<at-form-text id="input1"></at-form-text>';
+          elt.html = '<div><at-form-text id="input1"></at-form-text></div>';
 
           var sdCont = elt.$.setdomContainer;
           var ihCont = elt.$.innerHtmlContainer;
+
           assertPdChildrenEquals(sdCont, ihCont);
           assertPdChildNodesEquals(sdCont, ihCont);
           assertPdInnerHTMLEquals(sdCont, ihCont);
@@ -368,7 +368,7 @@
           var sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
           sdInputRefBefore._abc = 'abc';
 
-          elt.html = '<at-form-text id="input1"></at-form-text>';
+          elt.html = '<div><at-form-text id="input1"></at-form-text></div>';
 
           // repeat tests
           assertPdChildrenEquals(sdCont, ihCont);
