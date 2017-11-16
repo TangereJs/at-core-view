@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+  <meta charset="UTF-8">
+  <title>test-setdom tests</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
+  <link rel="import" href="../test-setdom.html">
+  <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
+  </head>
+  <body>
+    <script>
+      suite('parse-html helper', function() {
+        
+        test('We can not adapt tests for parseHTML helper since that helper is not visible in production build of the set-dom.js library', function() {
+          // https://github.com/DylanPiercey/set-dom/blob/master/test/parse-html.test.js
+          assert.equal(true, true);
+        });
+
+      });
+    </script>
+  </body>
+</html>
