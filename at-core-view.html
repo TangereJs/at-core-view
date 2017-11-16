@@ -2,6 +2,8 @@
 <link rel="import" href="../liquid.js/liquid-import.html">
 <link rel="import" href="../at-theme/at-theme.html">
 
+<script src="lib/set-dom.js"></script>
+
 /* dom-module only needed for _resolveUrl */
 <dom-module id="at-core-view-hidden">
 </dom-module>
@@ -201,7 +203,22 @@
 
           var html = tmpl.render(root);
 
-          Polymer.dom(this.root).innerHTML = html;
+          // use set-dom library to update the root
+          // we can not pass this.root to setDOM as first argument because setdom will delete it from DOM
+          // setdom will delete it because the html we pass has different nodeType/nodeName and setDOM uses that information to replace/update the DOM
+          // instead we use firstChild of the this.root
+          var diffChild = Polymer.dom(this.root).firstChild;
+          var div = document.createElement('div');
+          div.innerHTML = html;
+          setDOM(diffChild, div.firstChild);
+          // setDOM updates the DOM but doesn't do style scoping; we do the style scoping manually
+          var unscopedElements = Polymer.dom(this.root).childNodes;
+          unscopedElements.forEach(function(node) { 
+            this.scopeSubtree(node);
+          }, this);
+
+          // Polymer.dom(this.root).innerHTML = html;
+
           Polymer.dom.flush();
           
           if (this._parent) {
