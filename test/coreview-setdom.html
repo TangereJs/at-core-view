@@ -34,7 +34,7 @@
 
         assert.equal(ihcn.length, stch.length);
 
-        ihcn.forEach(function(ihNode, index) {
+        Array.prototype.forEach.call(ihcn, function(ihNode, index) {
           var stNode = stch[index];
 
           var eq = ihNode.isEqualNode(stNode);
@@ -191,7 +191,7 @@
         var actNodeChildNodes = Polymer.dom(actNode).childNodes;
         var expNodeChildNodes = Polymer.dom(expNode).childNodes;
         
-        actNodeChildNodes.forEach(function(node1, index) {
+        Array.prototype.forEach.call(actNodeChildNodes, function(node1, index) {
           var node2 = expNodeChildNodes[index];
           assertNodesEqual(node1, node2, actNode, expNode);
         });
@@ -221,7 +221,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
             
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -245,7 +245,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -278,7 +278,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -303,7 +303,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -337,7 +337,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -365,7 +365,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -411,7 +411,7 @@
             var expectedNodes = discDiv.childNodes;
             var actualNodes = elt.root.childNodes;
 
-            actualNodes.forEach(function(actNode, index) {
+            Array.prototype.forEach.call(actualNodes, function(actNode, index) {
               var expNode = expectedNodes[index];
 
               assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -444,7 +444,7 @@
               var expectedNodes = discDiv.childNodes;
               var actualNodes = elt.root.childNodes;
 
-              actualNodes.forEach(function(actNode, index) {
+              Array.prototype.forEach.call(actualNodes, function(actNode, index) {
                 var expNode = expectedNodes[index];
 
                 assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -499,7 +499,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
             
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -526,7 +526,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -568,7 +568,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -596,7 +596,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -639,7 +639,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -670,7 +670,7 @@
           var expectedNodes = discDiv.childNodes;
           var actualNodes = elt.root.childNodes;
 
-          actualNodes.forEach(function(actNode, index) {
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
             var expNode = expectedNodes[index];
 
             assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -727,7 +727,7 @@
             var expectedNodes = discDiv.childNodes;
             var actualNodes = elt.root.childNodes;
 
-            actualNodes.forEach(function(actNode, index) {
+            Array.prototype.forEach.call(actualNodes, function(actNode, index) {
               var expNode = expectedNodes[index];
 
               assertNodesEqual(actNode, expNode, sdCont, ihCont);
@@ -763,7 +763,7 @@
               var expectedNodes = discDiv.childNodes;
               var actualNodes = elt.root.childNodes;
 
-              actualNodes.forEach(function(actNode, index) {
+              Array.prototype.forEach.call(actualNodes, function(actNode, index) {
                 var expNode = expectedNodes[index];
 
                 assertNodesEqual(actNode, expNode, sdCont, ihCont);
