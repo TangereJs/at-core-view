@@ -151,7 +151,10 @@
 
           if (el.indexOf("/") < 0) el = elf + "/" + el;
           el = compUrl + el + ".html";
-          
+            
+          // @PERFORMANCE Check if element is in Polymer.telemetry.registrations
+          // If its already registered there is no need to call this.importHref
+
           this.importHref(el, function (e) {
             this._pendingImports--;
 
