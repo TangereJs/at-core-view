@@ -206,18 +206,51 @@
 
           var html = tmpl.render(root);
 
-          // use set-dom library to update the root
-          // we can not pass this.root to setDOM as first argument because setdom will delete it from DOM
-          // setdom will delete it because the html we pass has different nodeType/nodeName and setDOM uses that information to replace/update the DOM
-          // instead we use firstChild of the this.root
-          var diffChild = Polymer.dom(this.root).firstChild;
+          // place html into div.innerHTML so we have div's children prepared ahead of time
           var div = document.createElement('div');
           div.innerHTML = html;
-          setDOM(diffChild, div.firstChild);
+
+          for (var dcnIdx = 0; dcnIdx < div.childNodes.length; dcnIdx++) {
+            var child = div.childNodes[dcnIdx];
+
+            var existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
+            if (!existingChild) {
+              // if child doesn't exist we create a new div, append it to root, and update the reference to existingChild
+              var newChild = document.createElement('div');
+              Polymer.dom(this.root).appendChild(newChild);
+              existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
+              // existing child now exists
+            }
+            
+            if (child.nodeType === 3) {
+              // we need to clone textNodes because setDOM removes them their parent elements, WTF!?
+              var clone = child.cloneNode();
+              setDOM(existingChild, clone);
+            
+            } else {
+              setDOM(existingChild, child);
+            }
+          }
+
+          var dcLen = div.childNodes.length;
+          var rcLen = Polymer.dom(this.root).childNodes.length;
+          if (dcLen < rcLen) {
+            // remove children from DOM
+            for (var dcIdx=dcLen; dcIdx < rcLen; dcIdx++) {
+              var ctr = Polymer.dom(this.root).childNodes[dcIdx];
+              Polymer.dom(ctr.parentElement).removeChild(ctr);
+            }
+          }
+
           // setDOM updates the DOM but doesn't do style scoping; we do the style scoping manually
           var unscopedElements = Polymer.dom(this.root).childNodes;
           unscopedElements.forEach(function(node) { 
-            this.scopeSubtree(node);
+            if (this._parent) { 
+              this._parent.scopeSubtree(node); 
+
+            } else {
+              this.scopeSubtree(node);
+            }
           }, this);
 
           // Polymer.dom(this.root).innerHTML = html;
