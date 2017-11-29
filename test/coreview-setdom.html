@@ -253,9 +253,7 @@
 
           var sdContFCAfter = Polymer.dom(sdCont).firstChild;
           var eq = sdContFCAfter.isSameNode(sdContFCBefore);
-          // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-          // refrence line: at-core-view.render function line 112/113
-          assert.equal(eq, false);
+          assert.equal(eq, true);
         });
 
         test('test 2', function() {
@@ -311,9 +309,7 @@
           
           var sdContFCAfter = Polymer.dom(sdCont).firstChild;
           var eq = sdContFCAfter.isSameNode(sdContFCBefore);
-          // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-          // refrence line: at-core-view.render function line 112/113
-          assert.equal(eq, false);
+          assert.equal(eq, true);
         });
 
         test('test 3', function() {
@@ -376,9 +372,7 @@
           var placeholderVal = sdInputRefAfter.getAttribute('placeholder');
 
           var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
-          // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-          // refrence line: at-core-view.render function line 112/113
-          assert.equal(eq, false);
+          assert.equal(eq, true);
 
           assert.equal(placeholderVal, null);
         });
@@ -455,9 +449,7 @@
               var abcVal = sdInputRefAfter._abc;
 
               var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
-              // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-              // refrence line: at-core-view.render function line 112/113          
-              assert.equal(eq, false);
+              assert.equal(eq, true);
 
               assert.equal(abcVal, 'abc');
             }
@@ -534,9 +526,7 @@
 
           var sdContFCAfter = Polymer.dom(sdCont).firstChild;
           var eq = sdContFCAfter.isSameNode(sdContFCBefore);
-          // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-          // refrence line: at-core-view.render function line 112/113
-          assert.equal(eq, false);
+          assert.equal(eq, true);
         });
 
         test('test 2', function() {
@@ -604,9 +594,7 @@
           
           var sdContFCAfter = Polymer.dom(sdCont).firstChild;
           var eq = sdContFCAfter.isSameNode(sdContFCBefore);
-          // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-          // refrence line: at-core-view.render function line 112/113
-          assert.equal(eq, false);
+          assert.equal(eq, true);
         });
 
         test('test 3', function() {
@@ -681,9 +669,7 @@
           var placeholderVal = sdInputRefAfter.getAttribute('placeholder');
 
           var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
-          // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-          // refrence line: at-core-view.render function line 112/113
-          assert.equal(eq, false);
+          assert.equal(eq, true);
 
           assert.equal(placeholderVal, null);
         });
@@ -774,9 +760,7 @@
               var abcVal = sdInputRefAfter._abc;
 
               var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
-              // check to see if the same objects in memory are used fail becase at-core-view always sets placeholder first before updating the view
-              // refrence line: at-core-view.render function line 112/113          
-              assert.equal(eq, false);
+              assert.equal(eq, true);
 
               assert.equal(abcVal, 'abc');
             }
