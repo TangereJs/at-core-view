@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>setdom library tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="../../at-form-text/at-form-text.html" />
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
+  </head>
+
+  <body>
+
+    <test-fixture id="tests">
+      <template>
+        <at-core-view update-mode="1" model-root=""></at-core-view>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('shadydom tests', function() {
+        
+        test('update attributes on custom element', function(done) {
+          var elt = fixture('tests');
+          elt.updateMode = "1";
+          elt.modelRoot = "";
+          
+          var model = {
+            prop1: 'prop1Value'
+          };
+
+          elt.model = model;
+          elt.addEventListener('content-changed', handleContentChanged1);
+
+          var viewValue = '<span id="first">aaa {{prop1}}</span>';
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.textContent, "aaa prop1Value");
+
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.set('model.prop1', 'prop1Value123');
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#first');
+            assert.isNotNull(firstRef2);
+            assert.equal(firstRef1.isSameNode(firstRef2), true);
+            assert.equal(firstRef2.textContent, "aaa prop1Value123");
+
+            done();
+          }
+        });
+
+        test('replace custom element with another custom element', function(done) {
+          var elt = fixture('tests');
+          elt.updateMode = "1";
+          elt.modelRoot = "";
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value',
+            prop3: 'prop3Value'
+          };
+          elt.model = model;
+
+          elt.addEventListener('content-changed', handleContentChanged1);
+
+          var viewValue = '<at-form-text id="first" label="{{prop1}}" placeholder="{{prop2}}" hint="{{prop3}}"></at-form-text>';
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.equal(firstRef1.label, 'prop1Value');
+            assert.equal(firstRef1.placeholder, 'prop2Value');
+            assert.equal(firstRef1.hint, 'prop3Value');
+
+            elt.set('model.prop1', 'prop1Demo');
+            elt.set('model.prop2', 'prop2Demo');
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.set('model.prop3', 'prop3Demo');
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#first');
+            assert.equal(firstRef2.label, 'prop1Demo');
+            assert.equal(firstRef2.placeholder, 'prop2Demo');
+            assert.equal(firstRef2.hint, 'prop3Demo');
+
+            assert.equal(firstRef1.isSameNode(firstRef2), true);
+
+            done();
+          }
+        });
+
+        test('replace custom element with plain element', function() {
+          
+        });
+
+        test('replace plain element with custom element', function() {
+          
+        });
+
+      });
+
+      suite('shadydom tests with liquid template', function() {
+
+        test('update attributes on custom element', function() {
+          
+        });
+
+        test('replace custom element with another custom element', function() {
+          
+        });
+
+        test('replace custom element with plain element', function() {
+          
+        });
+
+        test('replace plain element with custom element', function() {
+          
+        });
+
+      });
+
+
+    </script>
+
+  </body>
+
+</html>
+
