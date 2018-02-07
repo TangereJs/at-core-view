@@ -53,11 +53,30 @@
         modelRoot: {
           type: String,
           value: "state.model"
+        },
+
+        /**
+         * Controls the DOM update mode
+         * When "0" , innerHTML is used to update
+         * When "1" , setDOM is used to update
+         * 
+         * @property updateMode
+         * @type String
+         * @default "0"
+         */
+        updateMode: {
+          type: String,
+          value: "0",
+          xtype: 'enum',
+          xvaluelist: [
+            { title: "Default", value: "0" },
+            { title: "setDOM", value: "1" }
+          ]
         }
       },
 
       observers: [
-        'render(model.*,value.*,view,placeholder)'
+        'render(model.*,value.*,view,placeholder,updateMode)'
       ],
 
       $meta: [{
@@ -217,54 +236,57 @@
 
           var html = tmpl.render(root);
 
-          // place html into div.innerHTML so we have div's children prepared ahead of time
-          var div = document.createElement('div');
-          div.innerHTML = html;
+          if (this.updateMode === "1") {
+            // place html into div.innerHTML so we have div's children prepared ahead of time
+            var div = document.createElement('div');
+            div.innerHTML = html;
 
-          for (var dcnIdx = 0; dcnIdx < div.childNodes.length; dcnIdx++) {
-            var child = div.childNodes[dcnIdx];
+            for (var dcnIdx = 0; dcnIdx < div.childNodes.length; dcnIdx++) {
+              var child = div.childNodes[dcnIdx];
 
-            var existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
-            if (!existingChild) {
-              // if child doesn't exist we create a new div, append it to root, and update the reference to existingChild
-              var newChild = document.createElement('div');
-              Polymer.dom(this.root).appendChild(newChild);
-              existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
-              // existing child now exists
+              var existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
+              if (!existingChild) {
+                // if child doesn't exist we create a new div, append it to root, and update the reference to existingChild
+                var newChild = document.createElement('div');
+                Polymer.dom(this.root).appendChild(newChild);
+                existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
+                // existing child now exists
+              }
+              
+              if (child.nodeType === 3) {
+                // we need to clone textNodes because setDOM removes them their parent elements, WTF!?
+                var clone = child.cloneNode();
+                setDOM(existingChild, clone);
+              
+              } else {
+                setDOM(existingChild, child);
+              }
             }
+
+            var dcLen = div.childNodes.length;
+            var rcLen = Polymer.dom(this.root).childNodes.length;
+            if (dcLen < rcLen) {
+              // remove children from DOM
+              for (var dcIdx=dcLen; dcIdx < rcLen; dcIdx++) {
+                var ctr = Polymer.dom(this.root).childNodes[dcIdx];
+                Polymer.dom(ctr.parentElement).removeChild(ctr);
+              }
+            }
+
+            // setDOM updates the DOM but doesn't do style scoping; we do the style scoping manually
+            var unscopedElements = Polymer.dom(this.root).childNodes;
+            unscopedElements.forEach(function(node) { 
+              if (this._parent) { 
+                this._parent.scopeSubtree(node); 
+
+              } else {
+                this.scopeSubtree(node);
+              }
+            }, this);
             
-            if (child.nodeType === 3) {
-              // we need to clone textNodes because setDOM removes them their parent elements, WTF!?
-              var clone = child.cloneNode();
-              setDOM(existingChild, clone);
-            
-            } else {
-              setDOM(existingChild, child);
-            }
+          } else if (this.updateMode === "0") {
+            Polymer.dom(this.root).innerHTML = html;
           }
-
-          var dcLen = div.childNodes.length;
-          var rcLen = Polymer.dom(this.root).childNodes.length;
-          if (dcLen < rcLen) {
-            // remove children from DOM
-            for (var dcIdx=dcLen; dcIdx < rcLen; dcIdx++) {
-              var ctr = Polymer.dom(this.root).childNodes[dcIdx];
-              Polymer.dom(ctr.parentElement).removeChild(ctr);
-            }
-          }
-
-          // setDOM updates the DOM but doesn't do style scoping; we do the style scoping manually
-          var unscopedElements = Polymer.dom(this.root).childNodes;
-          unscopedElements.forEach(function(node) { 
-            if (this._parent) { 
-              this._parent.scopeSubtree(node); 
-
-            } else {
-              this.scopeSubtree(node);
-            }
-          }, this);
-
-          // Polymer.dom(this.root).innerHTML = html;
 
           Polymer.dom.flush();
           
