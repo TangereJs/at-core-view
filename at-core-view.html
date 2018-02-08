@@ -265,7 +265,7 @@
 
             var dcLen = div.childNodes.length;
             var rcLen = Polymer.dom(this.root).childNodes.length;
-            if (dcLen < rcLen) {
+            if (dcLen && dcLen < rcLen) {
               // remove children from DOM
               for (var dcIdx=dcLen; dcIdx < rcLen; dcIdx++) {
                 var ctr = Polymer.dom(this.root).childNodes[dcIdx];
