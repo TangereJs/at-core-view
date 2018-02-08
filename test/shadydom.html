@@ -1,4 +1,3 @@
-<!doctype html>
 <html>
 
   <head>
@@ -9,6 +8,7 @@
     <script src="../../web-component-tester/browser.js"></script>
     <link rel="import" href="../at-core-view.html">
     <link rel="import" href="../../at-form-text/at-form-text.html" />
+    <link rel="import" href="../../at-form-checkbox/at-form-checkbox.html" />
     <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
   </head>
 
@@ -25,17 +25,51 @@
         
         test('update attributes on custom element', function(done) {
           var elt = fixture('tests');
-          elt.updateMode = "1";
-          elt.modelRoot = "";
+            
+          var viewValue = '<at-form-text id="first" label="lorem label" placeholder="ipsum placeholder"></at-form-text>';
+          elt.view = viewValue;
           
-          var model = {
-            prop1: 'prop1Value'
-          };
-
-          elt.model = model;
           elt.addEventListener('content-changed', handleContentChanged1);
 
-          var viewValue = '<span id="first">aaa {{prop1}}</span>';
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.hasAttribute("label"), true);
+            assert.equal(firstRef1.hasAttribute("placeholder"), true);
+
+            assert.equal(firstRef1.label, "lorem label");
+            assert.equal(firstRef1.placeholder, "ipsum placeholder");
+
+            elt.addEventListener('content-changed', handleContentChanged2);
+            var viewValue2 = '<at-form-text id="first" placeholder="ipsum placeholder" value="demo value"></at-form-text>';
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#first');
+            assert.isNotNull(firstRef2);
+            assert.equal(firstRef1.isSameNode(firstRef2), true);
+              
+            assert.equal(firstRef2.hasAttribute("label"), false);
+            assert.equal(firstRef2.placeholder, "ipsum placeholder");
+            assert.equal(firstRef2.value, "demo value");
+
+            done();
+          }
+        });
+
+        test('replace custom element with another custom element', function(done) {
+          var elt = fixture('tests');
+
+          elt.addEventListener('content-changed', handleContentChanged1);
+
+          var viewValue = '<at-form-text id="first"></at-form-text>';
           elt.view = viewValue;
 
           var firstRef1, firstRef2;
@@ -45,39 +79,30 @@
 
             firstRef1 = elt.querySelector('#first');
             assert.isNotNull(firstRef1);
-            assert.equal(firstRef1.textContent, "aaa prop1Value");
+            assert.equal(firstRef1.is, "at-form-text");
 
             elt.addEventListener('content-changed', handleContentChanged2);
-            elt.set('model.prop1', 'prop1Value123');
+            var viewValue2 = '<at-form-checkbox id="first"></at-form-checkbox>';
+            elt.view = viewValue2;
           }
 
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
             firstRef2 = elt.querySelector('#first');
-            assert.isNotNull(firstRef2);
-            assert.equal(firstRef1.isSameNode(firstRef2), true);
-            assert.equal(firstRef2.textContent, "aaa prop1Value123");
+            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef2.is, "at-form-checkbox"); 
 
             done();
           }
         });
 
-        test('replace custom element with another custom element', function(done) {
+        test('replace custom element with plain element', function(done) {
           var elt = fixture('tests');
-          elt.updateMode = "1";
-          elt.modelRoot = "";
-
-          var model = {
-            prop1: 'prop1Value',
-            prop2: 'prop2Value',
-            prop3: 'prop3Value'
-          };
-          elt.model = model;
 
           elt.addEventListener('content-changed', handleContentChanged1);
 
-          var viewValue = '<at-form-text id="first" label="{{prop1}}" placeholder="{{prop2}}" hint="{{prop3}}"></at-form-text>';
+          var viewValue = '<at-form-checkbox id="first"></at-form-checkbox>';
           elt.view = viewValue;
 
           var firstRef1, firstRef2;
@@ -86,64 +111,276 @@
             elt.removeEventListener('content-changed', handleContentChanged1);
 
             firstRef1 = elt.querySelector('#first');
-            assert.equal(firstRef1.label, 'prop1Value');
-            assert.equal(firstRef1.placeholder, 'prop2Value');
-            assert.equal(firstRef1.hint, 'prop3Value');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.is, "at-form-checkbox");
 
-            elt.set('model.prop1', 'prop1Demo');
-            elt.set('model.prop2', 'prop2Demo');
             elt.addEventListener('content-changed', handleContentChanged2);
-            elt.set('model.prop3', 'prop3Demo');
+            var viewValue2 = '<div id="first"></div>';
+            elt.view = viewValue2;
           }
 
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
             firstRef2 = elt.querySelector('#first');
-            assert.equal(firstRef2.label, 'prop1Demo');
-            assert.equal(firstRef2.placeholder, 'prop2Demo');
-            assert.equal(firstRef2.hint, 'prop3Demo');
-
-            assert.equal(firstRef1.isSameNode(firstRef2), true);
+            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef2.nodeName, "DIV"); 
 
             done();
           }
         });
 
-        test('replace custom element with plain element', function() {
-          
-        });
+        test('replace plain element with custom element', function(done) {
+          var elt = fixture('tests');
 
-        test('replace plain element with custom element', function() {
-          
+          elt.addEventListener('content-changed', handleContentChanged1);
+
+          var viewValue = '<div id="first"></div>';
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.nodeName, "DIV"); 
+
+            elt.addEventListener('content-changed', handleContentChanged2);
+            var viewValue2 = '<at-form-checkbox id="first"></at-form-checkbox>';            
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#first');
+            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef2.is, "at-form-checkbox");
+
+            done();
+          }          
         });
 
       });
 
       suite('shadydom tests with liquid template', function() {
 
-        test('update attributes on custom element', function() {
+        test('update attributes on custom element', function(done) {
+          var elt = fixture('tests');
           
+          var model = {
+            label: "lorem label",
+            placeholder: "ipsum placeholder"
+          };
+          elt.model = model;
+
+          var viewValue = '<at-form-text id="first" label="{{label}}" placeholder="{{placeholder}}"></at-form-text>';
+
+          elt.addEventListener('content-changed', handleContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.hasAttribute("label"), true);
+            assert.equal(firstRef1.hasAttribute("placeholder"), true);
+
+            assert.equal(firstRef1.label, "lorem label");
+            assert.equal(firstRef1.placeholder, "ipsum placeholder");
+
+            elt.model = {
+              placeholder: 'ipsum placeholder',
+              value: 'demo value'
+            };
+            var viewValue2 = '<at-form-text id="first" placeholder="{{placeholder}}" value="{{value}}"></at-form-text>';
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#first');
+            assert.isNotNull(firstRef2);
+            assert.equal(firstRef1.isSameNode(firstRef2), true);
+              
+            assert.equal(firstRef2.hasAttribute("label"), false);
+            assert.equal(firstRef2.placeholder, "ipsum placeholder");
+            assert.equal(firstRef2.value, "demo value");
+
+            done();
+          }          
         });
 
-        test('replace custom element with another custom element', function() {
+        test('replace custom element with another custom element', function(done) {
+          var elt = fixture('tests');
           
+          var model = {
+            label: "lorem label",
+            placeholder: "ipsum placeholder"
+          };
+          elt.model = model;
+
+          var viewValue = '<at-form-text id="first" label="{{label}}" placeholder="{{placeholder}}"></at-form-text>';
+          elt.addEventListener('content-changed', handleContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.is, 'at-form-text');
+            assert.equal(firstRef1.hasAttribute("label"), true);
+            assert.equal(firstRef1.hasAttribute("placeholder"), true);
+
+            assert.equal(firstRef1.label, "lorem label");
+            assert.equal(firstRef1.placeholder, "ipsum placeholder");
+
+            elt.model = {
+              hint: 'ipsum hint',
+              value: 'true'
+            };
+            var viewValue2 = '<at-form-checkbox id="second" hint="{{hint}}" value="{{value}}"></at-form-checkbox>';
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#second');
+            assert.isNotNull(firstRef2);
+            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef2.is, 'at-form-checkbox');
+              
+            assert.equal(firstRef2.hasAttribute("label"), false);
+            assert.equal(firstRef2.hint, "ipsum hint");
+            assert.equal(firstRef2.value, true);
+            assert.equal(firstRef2.hasAttribute("hint"), true);
+            assert.equal(firstRef2.hasAttribute("value"), true);
+
+            done();
+          }
         });
 
-        test('replace custom element with plain element', function() {
+        test('replace custom element with plain element', function(done) {
+          var elt = fixture('tests');
           
+          var model = {
+            label: "lorem label",
+            placeholder: "ipsum placeholder"
+          };
+          elt.model = model;
+
+          var viewValue = '<at-form-text id="first" label="{{label}}" placeholder="{{placeholder}}"></at-form-text>';
+          elt.addEventListener('content-changed', handleContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.is, 'at-form-text');
+            assert.equal(firstRef1.hasAttribute("label"), true);
+            assert.equal(firstRef1.hasAttribute("placeholder"), true);
+
+            assert.equal(firstRef1.label, "lorem label");
+            assert.equal(firstRef1.placeholder, "ipsum placeholder");
+
+            elt.model = {
+              hint: 'ipsum hint',
+              value: 'true'
+            };
+            var viewValue2 = '<div id="second" hint="{{hint}}" value="{{value}}"></div>';
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#second');
+            assert.isNotNull(firstRef2);
+            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef2.nodeName, 'DIV');
+              
+            assert.equal(firstRef2.hasAttribute("label"), false);
+            assert.equal(firstRef2.getAttribute('hint'), "ipsum hint");
+            assert.equal(firstRef2.getAttribute('value'), "true");
+
+            done();
+          }
         });
 
-        test('replace plain element with custom element', function() {
+        test('replace plain element with custom element', function(done) {
+          var elt = fixture('tests');
           
+          var model = {
+            hint: 'ipsum hint',
+            value: 'true'
+          };
+          elt.model = model;
+
+          var viewValue = '<div id="first" hint="{{hint}}" value="{{value}}"></div>';
+          elt.addEventListener('content-changed', handleContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1, firstRef2;
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            firstRef1 = elt.querySelector('#first');
+            assert.isNotNull(firstRef1);
+            assert.equal(firstRef1.nodeName, 'DIV');
+
+            assert.equal(firstRef1.hasAttribute("label"), false);
+            assert.equal(firstRef1.getAttribute('hint'), "ipsum hint");
+            assert.equal(firstRef1.getAttribute('value'), "true");
+
+
+            var model = {
+              label: "lorem label",
+              placeholder: "ipsum placeholder"
+            };            
+            elt.model = model;
+            
+            var viewValue2 = '<at-form-text id="second" label="{{label}}" placeholder="{{placeholder}}"></at-form-text>';
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            firstRef2 = elt.querySelector('#second');
+            assert.isNotNull(firstRef2);
+            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef2.is, 'at-form-text');
+            assert.equal(firstRef2.hasAttribute("label"), true);
+            assert.equal(firstRef2.hasAttribute("placeholder"), true);
+              
+            assert.equal(firstRef2.label, "lorem label");
+            assert.equal(firstRef2.placeholder, "ipsum placeholder");
+
+            done();
+          }
         });
 
       });
-
-
     </script>
-
   </body>
-
 </html>
 
