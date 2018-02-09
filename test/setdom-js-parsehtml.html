@@ -6,18 +6,152 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <script src="../../web-component-tester/browser.js"></script>
-  <link rel="import" href="../test-setdom.html">
+  <script src="../lib/set-dom.js"></script>
   <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
   </head>
   <body>
     <script>
+      var runTests = function () {
+        parseHTML._testhook_initSetDom();
+
+        var divHtml = '<div class="someClass">Test</div>';
+        var bodyHtml = '<body>' + divHtml + '</body>';
+        var headHTML = '<head><title>Test</title></head>';
+
+        // test non-root level
+        var parsed = parseHTML(divHtml, 'DIV');
+        assert.equal(parsed.outerHTML, divHtml);
+
+        // test root level (with body)
+        parsed = parseHTML(headHTML + bodyHtml, 'HTML');
+        assert.equal(parsed.outerHTML, '<html>' + headHTML + bodyHtml + '</html>');
+
+        // test root level (without body)
+        parsed = parseHTML(headHTML, 'HTML');
+        assert.equal(parsed.outerHTML, '<html>' + headHTML + '<body></body></html>');
+      };
+
       suite('parse-html helper', function() {
         
-        test('We can not adapt tests for parseHTML helper since that helper is not visible in production build of the set-dom.js library', function() {
-          // https://github.com/DylanPiercey/set-dom/blob/master/test/parse-html.test.js
-          assert.equal(true, true);
+        test('should use DOMParser', function () {
+          // DOMParser is natively supported in the test environment
+          runTests();
+        });
+        
+        suite('Without DOMParser', function () {
+          var oldFn;
+          
+          setup(function () {
+            oldFn = window.DOMParser;
+            delete window.DOMParser;
+          });
+          
+          teardown(function () {
+            window.DOMParser = oldFn;
+          });
+
+          test('should still work', function () {
+            runTests();
+          });
         });
 
+      });
+      
+      suite('With DOMParser, but without text/html support', function () {
+        var oldFn;
+        
+        setup(function () {
+          oldFn = window.DOMParser.prototype.parseFromString;
+          window.DOMParser.prototype.parseFromString = function (markup, type) {
+            if (type === 'text/html') { throw new Error('text/html not supported'); }
+            // in the test environment, the xhtml parsing is not supported, use html instead
+            return oldFn.call(this, markup, 'text/html');
+          }
+        });
+        
+        teardown(function () {
+          window.DOMParser.prototype.parseFromString = oldFn;
+        });
+
+        test('should still work', function () {
+          runTests();
+        });
+
+        suite('AND without support for documentElement.innerHTML', function () {
+          var oldDesc;
+
+          setup(function () {
+            oldDesc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
+            Object.defineProperty(Element.prototype, 'innerHTML', {
+              get: function () {
+                return oldDesc.get.call(this);
+              },
+              set: function () {
+                if (this.nodeName === 'HTML') { throw new Error('not supported'); }
+                return oldDesc.set.apply(this, arguments);
+              }
+            });
+          });
+          
+          teardown(function () {
+            Object.defineProperty(Element.prototype, 'innerHTML', oldDesc);
+          });
+
+          test('should still work', function () {
+            runTests();
+          });
+        });
+      });
+      
+      suite('With weird className lowercasing (iOS 9 Safari / Safari 9)', function () {
+        var oldFn;
+
+        setup(function () {
+          oldFn = Element.prototype.appendChild;
+          Element.prototype.appendChild = function (child) {
+            // this is essentially what iOS 9 Safari and Safari 9 do:
+            // lowercase classList but keep html unchanged
+            if (child.hasAttribute('class')) {
+              child.setAttribute('class', child.getAttribute('class').toLowerCase());
+            }
+
+            oldFn.call(this, child);
+          };
+        });
+
+        teardown(function () {
+          Element.prototype.appendChild = oldFn;
+        });
+
+        test('should still work', function () {
+          runTests();
+        });
+      });
+
+      suite('With random DOMParser failures (iOS UIWebView)', function () {
+        var oldFn;
+
+        setup(function () {
+          oldFn = window.DOMParser.prototype.parseFromString;
+          window.DOMParser.prototype.parseFromString = function (data, type) {
+            var parsed = oldFn.apply(this, arguments);
+            if (parsed.body.firstChild && parsed.body.firstChild.nodeName === 'WBR') {
+              // make it pass the testCode in parse-html
+              return parsed;
+            } else {
+              // this is essentially what iOS UIWebView sometimes returns
+              return { body: null };
+            }
+          };
+        });
+
+        teardown(function () {
+          window.DOMParser.prototype.parseFromString = oldFn;
+        });
+
+        test('should still work', function () {
+          runTests();
+        });
       });
     </script>
   </body>
