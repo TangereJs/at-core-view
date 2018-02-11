@@ -104,6 +104,8 @@
       _getObjPath: function (obj, path) {
 
         if (!path) return obj;
+        if (!obj) return null;
+
         var paths = path.split('.'),
           current = obj;
 
@@ -202,6 +204,7 @@
           }, true);
         }
       },
+
       _resolveUrl: function (url) {
         var module = Polymer.DomModule.import("at-core-view-hidden");
         var root = '';
