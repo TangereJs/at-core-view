@@ -242,10 +242,16 @@
           if (this.updateMode === "1") {
             // place html into div.innerHTML so we have div's children prepared ahead of time
             var div = document.createElement('div');
-            div.innerHTML = html;
+            Polymer.dom(div).innerHTML = html;
+            
+            // NOTE div must be appended to document because FF/IE11/Edge do not upgrade
+            // custom elements in div.innerHTML otherwise
+            document.body.appendChild(div);
+            document.body.removeChild(div);
+            Polymer.dom.flush();
 
-            for (var dcnIdx = 0; dcnIdx < div.childNodes.length; dcnIdx++) {
-              var child = div.childNodes[dcnIdx];
+            for (var dcnIdx = 0; dcnIdx < Polymer.dom(div).childNodes.length; dcnIdx++) {
+              var child = Polymer.dom(div).childNodes[dcnIdx];
 
               var existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
               if (!existingChild) {

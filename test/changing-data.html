@@ -56,7 +56,7 @@
 
             firstRef2 = elt.querySelector('#first');
             assert.isNotNull(firstRef2);
-            assert.equal(firstRef1.isSameNode(firstRef2), true);
+            assert.equal(firstRef1 === firstRef2, true);
             assert.equal(firstRef2.textContent, "aaa prop1Value123");
 
             done();
@@ -98,17 +98,14 @@
 
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
+            console.log('handler executed');
 
             firstRef2 = elt.querySelector('#first');
             assert.equal(firstRef2.label, 'prop1Demo');
             assert.equal(firstRef2.placeholder, 'prop2Demo');
             assert.equal(firstRef2.hint, 'prop3Demo');
 
-            // isSameNode doesn't fail in Chrome but Chrome claims that nodes are the same
-            // isSameNode fails in Firefox in shadyDOM and shadowDOM with ScriptError
-            // isSameNode doesn't fail in Edge but Edge claims that nodes are not the same in both shady and shadowDOM
-            // isSameNode doesn't fail in IE11 but IE11 claims that nodes are not the same in both shady and shadowDOM
-            // assert.equal(firstRef1.isSameNode(firstRef2), true);
+            assert.equal(firstRef1 === firstRef2, true);
 
             done();
           }

@@ -54,12 +54,7 @@
 
             firstRef2 = elt.querySelector('#first');
             assert.isNotNull(firstRef2);
-
-            // Edge claims that nodes are the same
-            // Firefox reports a script error
-            // Edge claims that nodes are not the same
-            // IE11 claims that nodes are not the same
-            // assert.equal(firstRef1.isSameNode(firstRef2), true);
+            assert.equal(firstRef1 === firstRef2, true);
               
             assert.equal(firstRef2.hasAttribute("label"), false);
             assert.equal(firstRef2.placeholder, "ipsum placeholder");
@@ -95,7 +90,7 @@
             elt.removeEventListener('content-changed', handleContentChanged2);
 
             firstRef2 = elt.querySelector('#first');
-            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, "at-form-checkbox"); 
 
             done();
@@ -128,7 +123,7 @@
             elt.removeEventListener('content-changed', handleContentChanged2);
 
             firstRef2 = elt.querySelector('#first');
-            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.nodeName, "DIV"); 
 
             done();
@@ -161,17 +156,15 @@
             elt.removeEventListener('content-changed', handleContentChanged2);
 
             firstRef2 = elt.querySelector('#first');
-            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, "at-form-checkbox");
 
             done();
           }          
         });
-
       });
 
       suite('shadydom tests with liquid template', function() {
-
         test('update attributes on custom element', function(done) {
           var elt = fixture('tests');
           
@@ -213,12 +206,7 @@
 
             firstRef2 = elt.querySelector('#first');
             assert.isNotNull(firstRef2);
-
-            // Edge claims that nodes are the same
-            // Firefox reports a script error
-            // Edge claims that nodes are not the same
-            // IE11 claims that nodes are not the same
-            // assert.equal(firstRef1.isSameNode(firstRef2), true);
+            assert.equal(firstRef1 === firstRef2, true);
               
             assert.equal(firstRef2.hasAttribute("label"), false);
             assert.equal(firstRef2.placeholder, "ipsum placeholder");
@@ -269,7 +257,7 @@
 
             firstRef2 = elt.querySelector('#second');
             assert.isNotNull(firstRef2);
-            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, 'at-form-checkbox');
               
             assert.equal(firstRef2.hasAttribute("label"), false);
@@ -323,7 +311,7 @@
 
             firstRef2 = elt.querySelector('#second');
             assert.isNotNull(firstRef2);
-            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.nodeName, 'DIV');
               
             assert.equal(firstRef2.hasAttribute("label"), false);
@@ -377,7 +365,7 @@
 
             firstRef2 = elt.querySelector('#second');
             assert.isNotNull(firstRef2);
-            assert.equal(firstRef1.isSameNode(firstRef2), false);
+            assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, 'at-form-text');
             assert.equal(firstRef2.hasAttribute("label"), true);
             assert.equal(firstRef2.hasAttribute("placeholder"), true);
@@ -388,7 +376,6 @@
             done();
           }
         });
-
       });
     </script>
   </body>

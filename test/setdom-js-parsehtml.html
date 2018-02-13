@@ -81,6 +81,7 @@
           var oldDesc;
 
           setup(function () {
+            // NOTE in IE11 oldDesc is undefined
             oldDesc = Object.getOwnPropertyDescriptor(Element.prototype, 'innerHTML');
             Object.defineProperty(Element.prototype, 'innerHTML', {
               get: function () {
@@ -94,6 +95,8 @@
           });
           
           teardown(function () {
+            // NOTE in IE11 oldDesc is undefined
+            if (!oldDesc) return;
             Object.defineProperty(Element.prototype, 'innerHTML', oldDesc);
           });
 
