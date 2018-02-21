@@ -79,8 +79,8 @@
             elt2 = elt.querySelector('#second');
             elt3 = elt.querySelector('#third');
 
-            assert.equal(elt1 === ref1, true);
-            assert.equal(elt2 === ref2, true);
+            assert.equal(elt1 === ref2, true);
+            assert.equal(elt2 === ref1, true);
             assert.equal(elt3 === ref3, true);
 
             assertLabelAndPlaceholder(elt1, "label 1", "placeholder 1");
@@ -97,10 +97,10 @@
             elt1 = elt.querySelector('#first');
             elt2 = elt.querySelector('#second');
             elt3 = elt.querySelector('#third');
-
-            assert.equal(elt1 === ref1, true);
-            assert.equal(elt2 === ref2, true);
-            assert.equal(elt3 === ref3, true);
+            
+            assert.equal(elt1 === ref3, true);
+            assert.equal(elt2 === ref1, true);
+            assert.equal(elt3 === ref2, true);
 
             assertLabelAndPlaceholder(elt1, "label 1", "placeholder 1");
             assertLabelAndPlaceholder(elt2, "label 2", "placeholder 2");

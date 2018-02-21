@@ -250,8 +250,17 @@
             document.body.removeChild(div);
             Polymer.dom.flush();
 
-            for (var dcnIdx = 0; dcnIdx < Polymer.dom(div).childNodes.length; dcnIdx++) {
-              var child = Polymer.dom(div).childNodes[dcnIdx];
+            // NOTE we need to clone refs to Polymer.dom(div).childNodes into newNodesArr because
+            // setDOM can either replace or update the childNode
+            // if replace happens length of Polymer.dom(div).childNodes decreases, which breaks DOM update
+            var newNodesCount = Polymer.dom(div).childNodes.length;
+            var newNodesArr = [];
+            Array.prototype.forEach.call(Polymer.dom(div).childNodes, function(node) {
+              newNodesArr.push(node);
+            });
+
+            for (var dcnIdx = 0; dcnIdx < newNodesCount; dcnIdx++) {
+              var child = newNodesArr[dcnIdx];
 
               var existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
               if (!existingChild) {
