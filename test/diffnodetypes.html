@@ -21,24 +21,30 @@
     </test-fixture>
 
     <script>
-      suite('reordering tests', function() {
+      suite('mix of element and text nodes in view', function() {
         
-        test('update attributes on custom element', function(done) {
+        test('mix of element and text nodes in view', function(done) {
           var elt = fixture('tests');
             
           var viewValue1 = 
             '<at-form-text id="first" label="label 1" placeholder="placeholder 1"></at-form-text>' + 
+            '\n' + 
             '<at-form-text id="second" label="label 2" placeholder="placeholder 2"></at-form-text>' + 
+            '\n' + 
             '<at-form-text id="third" label="label 3" placeholder="placeholder 3"></at-form-text>';
 
           var viewValue2 = 
             '<at-form-text id="second" label="label 2" placeholder="placeholder 2"></at-form-text>' + 
+            '\n' + 
             '<at-form-text id="first" label="label 1" placeholder="placeholder 1"></at-form-text>' + 
+            '\n' + 
             '<at-form-text id="third" label="label 3" placeholder="placeholder 3"></at-form-text>';
 
           var viewValue3 = 
             '<at-form-text id="second" label="label 2" placeholder="placeholder 2"></at-form-text>' + 
+            '\n' + 
             '<at-form-text id="third" label="label 3" placeholder="placeholder 3"></at-form-text>' + 
+            '\n' + 
             '<at-form-text id="first" label="label 1" placeholder="placeholder 1"></at-form-text>';
 
           elt.addEventListener('content-changed', handleContentChanged1);
