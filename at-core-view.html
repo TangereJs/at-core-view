@@ -301,7 +301,11 @@
                 this.scopeSubtree(node);
               }
             }, this);
-            
+
+          // we will use separate else branch because if updateMode is set to something other that 1 or 0 (by mistake) we want to detect that mistake
+          } else if (this.updateMode === "1" && this._isFirstRender) {
+            Polymer.dom(this.root).innerHTML = html;
+
           } else if (this.updateMode === "0") {
             Polymer.dom(this.root).innerHTML = html;
           }
