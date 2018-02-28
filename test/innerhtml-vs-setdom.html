@@ -1,0 +1,850 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>setdom library tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="../../at-form-text/at-form-text.html" />
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
+  </head>
+
+  <body>
+
+    <test-fixture id="innerHTMLTest">
+      <template>
+        <at-core-view update-mode="0"></at-core-view>
+      </template>
+    </test-fixture>
+
+    <test-fixture id="setDomTest">
+      <template>
+        <at-core-view update-mode="2"></at-core-view>
+      </template>
+    </test-fixture>
+
+    <script>
+      // noru === Null or Undefined
+      function isnoru(obj) {
+        if (obj === null) return true;
+        if (obj === undefined) return true;
+        return false;
+      }
+
+      function assertContainerChildNodesEquals(elt) {
+        var ihcn = elt.innerHtmlChildNodes;
+        var stch = elt.setdomChildNodes;
+
+        assert.equal(ihcn.length, stch.length);
+
+        Array.prototype.forEach.call(ihcn, function(ihNode, index) {
+          var stNode = stch[index];
+
+          var eq = ihNode.isEqualNode(stNode);
+          assert.equal(eq, true);
+        });          
+      }
+
+      function assertContainerInnerHtmlEquals(elt) {
+        var ihInnerHTML = Polymer.dom(elt.$.innerHtmlContainer).innerHTML;
+        var sdInnerHTML = Polymer.dom(elt.$.setdomContainer).innerHTML;
+
+        assert.equal(sdInnerHTML, ihInnerHTML);
+      }
+
+      function assertPdChildrenEquals(actNode, expNode) {
+        var actNodeChildren = Polymer.dom(actNode).children;
+        var expNodeChildren = Polymer.dom(expNode).children;
+        
+        assert.equal(actNodeChildren.length, expNodeChildren.length);
+
+        actNodeChildren.forEach(function(actChild, index) {
+          var expChild = expNodeChildren[index];
+          var eq = actChild.isEqualNode(expChild);
+          assert.equal(eq, true);
+        });
+      } 
+
+      function assertPdChildNodesEquals(actNode, expNode) {
+        var actNodeChildren = Polymer.dom(actNode).childNodes;
+        var expNodeChildren = Polymer.dom(expNode).childNodes;
+        
+        assert.equal(actNodeChildren.length, expNodeChildren.length);
+
+        actNodeChildren.forEach(function(actChild, index) {
+          var expChild = expNodeChildren[index];
+          var eq = actChild.isEqualNode(expChild);
+          assert.equal(eq, true);
+        });
+      }
+
+      function assertPdParentElementEquals(actNode, actNodeParent) {
+        var parent = Polymer.dom(actNode).parentNode;
+        var eq = parent.isEqualNode(actNodeParent);
+        assert.equal(eq, true);
+      }
+
+      function assertPdFirstChildEquals(actNode, expNode) {
+        var actFirst = Polymer.dom(actNode).firstChild;
+        var expFirst = Polymer.dom(expNode).firstChild;
+
+        if (isnoru(actFirst) && isnoru(expFirst)) return;
+
+        var eq = actFirst.isEqualNode(expFirst);
+        assert.equal(eq, true);
+      }
+
+      function assertPdLastChildEquals(actNode, expNode) {
+        var actLast = Polymer.dom(actNode).lastChild;
+        var expLast = Polymer.dom(expNode).lastChild;
+
+        if (isnoru(actLast) && isnoru(expLast)) return;
+
+        var eq = actLast.isEqualNode(expLast);
+        assert.equal(eq, true);
+      }
+
+      function assertPdFirstElementChildEquals(actNode, expNode) {
+        var actFirst = Polymer.dom(actNode).firstElementChild;
+        var expFirst = Polymer.dom(expNode).firstElementChild;
+        
+        if (isnoru(actFirst) && isnoru(expFirst)) return;
+
+        var eq = actFirst.isEqualNode(expFirst);
+        assert.equal(eq, true);
+      }
+
+      function assertPdlastElementChildEquals(actNode, expNode) {
+        var actLast = Polymer.dom(actNode).lastElementChild;
+        var expLast = Polymer.dom(expNode).lastElementChild;
+
+        if (isnoru(actLast) && isnoru(expLast)) return;
+
+        var eq = actLast.isEqualNode(expLast);
+        assert.equal(eq, true);
+      }
+
+      function assertPdPreviousSiblingEquals(actNode, expNode) {
+        var actFirst = Polymer.dom(actNode).previousSibling;
+        var expFirst = Polymer.dom(expNode).previousSibling;
+
+        if (isnoru(actFirst) && isnoru(expFirst)) return;
+
+        var eq = actFirst.isEqualNode(expFirst);
+        assert.equal(eq, true);
+      }
+
+      function assertPdNextSiblingEquals(actNode, expNode) {
+        var actLast = Polymer.dom(actNode).nextSibling;
+        var expLast = Polymer.dom(expNode).nextSibling;
+
+        if (isnoru(actLast) && isnoru(expLast)) return;
+
+        var eq = actLast.isEqualNode(expLast);
+        assert.equal(eq, true);
+      }
+
+      function assertPdTextContentEquals(actNode, expNode) {
+        var actFirst = Polymer.dom(actNode).textContent;
+        var expFirst = Polymer.dom(expNode).textContent;
+        assert.equal(actFirst, expFirst);
+      }
+
+      function assertPdInnerHTMLEquals(actNode, expNode) {
+        var actFirst = Polymer.dom(actNode).innerHTML;
+        var expFirst = Polymer.dom(expNode).innerHTML;
+        assert.equal(actFirst, expFirst);
+      }
+
+      function assertNodesEqual(actNode, expNode, actNodeParent, expNodeParent) {
+        // Polymer.dom(parent).children
+        assertPdChildrenEquals(actNode, expNode);
+
+        // Polymer.dom(parent).childNodes
+        assertPdChildNodesEquals(actNode, expNode);
+        
+        // Polymer.dom(node).parentNode
+        assertPdParentElementEquals(actNode, actNodeParent);
+        assertPdParentElementEquals(expNode, expNodeParent);
+
+        // Polymer.dom(node).firstChild
+        assertPdFirstChildEquals(actNode, expNode);
+
+        // Polymer.dom(node).lastChild
+        assertPdLastChildEquals(actNode, expNode);
+
+        // Polymer.dom(node).firstElementChild
+        assertPdFirstElementChildEquals(actNode, expNode);
+
+        // Polymer.dom(node).lastElementChild
+        assertPdlastElementChildEquals(actNode, expNode);
+
+        // Polymer.dom(node).previousSibling
+        assertPdPreviousSiblingEquals(actNode, expNode);
+
+        // Polymer.dom(node).nextSibling
+        assertPdNextSiblingEquals(actNode, expNode);
+        
+        // Polymer.dom(node).textContent
+        assertPdTextContentEquals(actNode, expNode);
+
+        // Polymer.dom(node).innerHTML
+        assertPdInnerHTMLEquals(actNode, expNode);
+
+        var actNodeChildNodes = Polymer.dom(actNode).childNodes;
+        var expNodeChildNodes = Polymer.dom(expNode).childNodes;
+        
+        Array.prototype.forEach.call(actNodeChildNodes, function(node1, index) {
+          var node2 = expNodeChildNodes[index];
+          assertNodesEqual(node1, node2, actNode, expNode);
+        });
+      }
+
+      // apply style-scope to elt by using scopeParent.scopeSubtree
+      function scopeElt(elt, scopeParent) {
+        Array.prototype.forEach.call(elt.childNodes, function(node) {
+          scopeParent.scopeSubtree(node);
+        });
+      }
+
+
+      function doStaticHTMLTest1(elt) {
+
+        var viewValue = '<span id="first">aaa</span>';
+        elt.view = viewValue;
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = viewValue;
+
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+        
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+          
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        var viewValue2 = '<span id="first">bbb</span>';
+        elt.view = viewValue2;
+
+        discDiv.innerHTML = viewValue2;
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        ihCont = discDiv;
+        // repeat tests
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+      }
+
+      function doStaticHTMLTest2(elt) {
+        var viewValue = '<span id="first">aaa<span id="second">222<span id="third">333</span></span></span>';
+        elt.view = viewValue;
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = viewValue;
+
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        var viewValue2 = '<span id="first">aaa<span id="second">222</span></span>';
+        elt.view = viewValue2;
+
+        discDiv = document.createElement('div');
+        discDiv.innerHTML = viewValue2;
+
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        ihCont = discDiv;
+        // repeat tests
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+      }
+
+      function doStaticHTMLTest3(elt) {
+        var viewValue = '<div><input type="text" id="input1"/><div>bbb</div></div>';
+        elt.view = viewValue;
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = viewValue;
+
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        var viewValue2 = '<div><input type="text" id="input1"/><div>ccc</div></div>';
+        elt.view = viewValue2;
+
+        discDiv = document.createElement('div');
+        discDiv.innerHTML = viewValue2;
+
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        ihCont = discDiv;
+        // repeat tests
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+      }
+
+      function doStaticHTMLTest4(elt, done) {
+        var viewValue = '<div><at-form-text id="input1"></at-form-text></div>';
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = viewValue;
+
+        // Polymer.dom().innerHTML doesn't perform style-scoping
+        // scopeElt(discDiv, elt);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+
+        // when custom elements are used we need to wait for content-changed event because 
+        // at-core-view imports the element(s)
+        elt.addEventListener('content-changed', viewContentChanged);
+        elt.view = viewValue;
+
+        function viewContentChanged(event) {
+          elt.removeEventListener('content-changed', viewContentChanged);
+
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = discDiv.childNodes;
+          var actualNodes = elt.root.childNodes;
+
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+
+          // set placeholder
+          var viewValue2 = '<div><at-form-text id="input1" value="abc"></at-form-text></div>';
+
+          discDiv = document.createElement('div');
+          discDiv.innerHTML = viewValue2;
+          ihCont = discDiv;
+
+          // Polymer.dom().innerHTML doesn't perform style-scoping
+          // scopeElt(discDiv, elt);
+
+          elt.addEventListener('content-changed', view2ContentChanged);
+          elt.view = viewValue2;
+        }
+
+        function view2ContentChanged(event) {
+          elt.removeEventListener('content-changed', view2ContentChanged);
+
+          // repeat tests
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = discDiv.childNodes;
+          var actualNodes = elt.root.childNodes;
+
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+          
+          done();
+        }
+      }
+
+      suite('compare disconnected div innerHTML with at-core-view updateMode replace', function() {
+        test('test 1', function() {
+          var elt = fixture('innerHTMLTest');
+
+          doStaticHTMLTest1(elt);
+        });
+
+        test('test 2', function() {
+          var elt = fixture('innerHTMLTest');
+
+          doStaticHTMLTest2(elt);
+        });
+
+        test('test 3', function() {
+          var elt = fixture('innerHTMLTest');
+
+          doStaticHTMLTest3(elt);
+        });
+
+        test('test 4', function(done) {
+          var elt = fixture('innerHTMLTest');
+
+          doStaticHTMLTest4(elt, done);
+        });
+      });
+
+      suite('compare disconnected div innerHTML with at-core-view updateMode setDOM', function() {
+        test('test 1', function() {
+          var elt = fixture('setDomTest');
+
+          doStaticHTMLTest1(elt);
+        });
+
+        test('test 2', function() {
+          var elt = fixture('setDomTest');
+
+          doStaticHTMLTest2(elt);
+        });
+
+        test('test 3', function() {
+          var elt = fixture('setDomTest');
+
+          doStaticHTMLTest3(elt);
+        });
+
+        test('test 4', function(done) {
+          var elt = fixture('setDomTest');
+          
+          doStaticHTMLTest4(elt, done);
+        });
+      });
+
+      function doLiquidTemplateTest1(elt) {
+        var model = {
+          prop1: 'prop1Value'
+        };
+
+        elt.model = model;
+
+        var viewValue = '<span id="first">aaa {{prop1}}</span>';
+        elt.view = viewValue;
+
+        var tmpl = window.Liquid.parse(viewValue);
+        var complTempl = tmpl.render(model);
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = complTempl;
+
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+          
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        var sdContFCBefore = Polymer.dom(sdCont).firstChild;
+        
+        var viewValue2 = '<span id="first">bbb {{prop1}}</span>';
+        elt.view = viewValue2;
+
+        tmpl = window.Liquid.parse(viewValue2);
+        complTempl = tmpl.render(model);
+
+        discDiv.innerHTML = complTempl;
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        ihCont = discDiv;
+        // repeat tests
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        var sdContFCAfter = Polymer.dom(sdCont).firstChild;
+        var eq = sdContFCAfter.isSameNode(sdContFCBefore);
+        // assert.equal(eq, true);
+      }
+
+      function doLiquidTemplateTest2(elt) {
+        var model = {
+          prop1: 'prop1Value',
+          prop2: 'prop2Value',
+          prop3: 'prop3Value'
+        };
+        elt.model = model;
+        var viewValue = '<span id="first">aaa {{prop1}}<span id="second">222 {{prop2}}<span id="third">333 {{prop3}}</span></span></span>';
+        elt.view = viewValue;
+
+        var tmpl = window.Liquid.parse(viewValue);
+        var complTempl = tmpl.render(model);
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = complTempl;
+
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        var sdContFCBefore = Polymer.dom(sdCont).firstChild;
+        var viewValue2 = '<span id="first">aaa {{prop1}}<span id="second">222 {{prop2}}</span></span>';
+        elt.view = viewValue2;
+
+        tmpl = window.Liquid.parse(viewValue2);
+        complTempl = tmpl.render(model);
+
+        discDiv = document.createElement('div');
+        discDiv.innerHTML = complTempl;
+
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        ihCont = discDiv;
+        // repeat tests
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+        
+        var sdContFCAfter = Polymer.dom(sdCont).firstChild;
+        var eq = sdContFCAfter.isSameNode(sdContFCBefore);
+        // assert.equal(eq, true);
+      }
+
+      function doLiquidTemplateTest3(elt) {
+        var model = {
+          prop1: 'prop1Value',
+          prop2: 'prop2Value',
+          prop3: 'prop3Value'
+        };
+        elt.model = model;
+        var viewValue = '<div>{{prop1}}<input type="text" id="input1" value="{{prop2}}"/><div>bbb{{prop3}}</div></div>';
+        elt.view = viewValue;
+
+        var tmpl = Liquid.parse(viewValue);
+        var complTempl = tmpl.render(model);
+
+        var discDiv = document.createElement('div');
+        discDiv.innerHTML = complTempl;
+
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+
+        // set placeholder
+        var sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
+        Polymer.dom(sdInputRefBefore).setAttribute('placeholder', 'lorem ipsum');
+
+        var viewValue2 = '<div>{{prop1}}<input type="text" id="input1" value="{{prop2}}"/><div>ccc{{prop3}}</div></div>';
+        elt.view = viewValue2;
+
+        tmpl = Liquid.parse(viewValue2);
+        complTempl = tmpl.render(model);
+
+        discDiv = document.createElement('div');
+        discDiv.innerHTML = complTempl;
+
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        ihCont = discDiv;
+        // repeat tests
+        assertPdChildrenEquals(sdCont, ihCont);
+        assertPdChildNodesEquals(sdCont, ihCont);
+        assertPdInnerHTMLEquals(sdCont, ihCont);
+
+        // assert that Polymer.dom api returns same results
+        var expectedNodes = discDiv.childNodes;
+        var actualNodes = elt.root.childNodes;
+
+        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+          var expNode = expectedNodes[index];
+
+          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+        });
+        
+        // query placeholder
+        var sdInputRefAfter = Polymer.dom(sdCont).querySelector('#input1');          
+        var placeholderVal = sdInputRefAfter.getAttribute('placeholder');
+
+        var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
+        // assert.equal(eq, true);
+
+        assert.equal(placeholderVal, null);
+      }
+
+      function doLiquidTemplateTest4(elt, done) {
+        var model = {
+          prop1: 'prop1Value',
+          prop2: 'prop2Value',
+          prop3: 'prop3Value'
+        };
+        elt.model = model;
+
+        var viewValue = '<div>{{prop1}}<at-form-text id="input1" value="{{prop2}}"></at-form-text>{{prop3}}</div>';
+
+        var tmpl = Liquid.parse(viewValue);
+        var complTempl = tmpl.render(model);
+
+        discDiv = document.createElement('div');
+        discDiv.innerHTML = complTempl;
+
+        // elt.scopeSubtree(discDiv.firstChild);
+
+        var sdCont = elt.root;
+        var ihCont = discDiv;
+
+        // when custom elements are used we need to wait for content-changed event because 
+        // at-core-view imports the element(s)
+        elt.addEventListener('content-changed', viewContentChanged);
+        elt.view = viewValue;
+        var sdInputRefBefore;
+        function viewContentChanged(event) {
+          elt.removeEventListener('content-changed', viewContentChanged);
+
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = discDiv.childNodes;
+          var actualNodes = elt.root.childNodes;
+
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+
+          // set placeholder
+          sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
+          sdInputRefBefore._abc = 'abc';
+          var viewValue2 = '<div>{{prop1}}<at-form-text id="input1" value="{{prop2}}" attr1="val1"></at-form-text>{{prop3}}</div>';
+
+          tmpl = Liquid.parse(viewValue2);
+          complTempl = tmpl.render(model);
+
+          discDiv = document.createElement('div');
+          discDiv.innerHTML = complTempl;
+
+          // elt.scopeSubtree(discDiv.firstChild);
+
+          ihCont = discDiv;
+
+          elt.addEventListener('content-changed', view2ContentChanged);
+          elt.view = viewValue2;
+        }
+
+        function view2ContentChanged(event) {
+          elt.removeEventListener('content-changed', view2ContentChanged);
+
+          // repeat tests
+          assertPdChildrenEquals(sdCont, ihCont);
+          assertPdChildNodesEquals(sdCont, ihCont);
+          assertPdInnerHTMLEquals(sdCont, ihCont);
+
+          // assert that Polymer.dom api returns same results
+          var expectedNodes = discDiv.childNodes;
+          var actualNodes = elt.root.childNodes;
+
+          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
+            var expNode = expectedNodes[index];
+
+            assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          });
+          
+          // query placeholder
+          var sdInputRefAfter = Polymer.dom(sdCont).querySelector('#input1');
+          var abcVal = sdInputRefAfter._abc;
+
+          var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
+          // assert.equal(eq, true);
+
+          done();
+        }
+      }
+
+      suite('compare disconnected div innerHTML with at-core-view updateMode replace', function() {
+        test('test 1', function() {
+          var elt = fixture('innerHTMLTest');
+
+          doLiquidTemplateTest1(elt);
+        });
+
+        test('test 2', function() {
+          var elt = fixture('innerHTMLTest');
+
+          doLiquidTemplateTest2(elt);
+        });
+
+        test('test 3', function() {
+          var elt = fixture('innerHTMLTest');
+
+          doLiquidTemplateTest3(elt);
+        });
+
+        test('test 4', function(done) {
+          var elt = fixture('innerHTMLTest');
+
+          doLiquidTemplateTest4(elt, done);
+        });
+      });
+
+      suite('compare disconnected div innerHTML with at-core-view updateMode setDOM', function() {
+        test('test 1', function() {
+          var elt = fixture('setDomTest');
+
+          doLiquidTemplateTest1(elt);
+        });
+
+        test('test 2', function() {
+          var elt = fixture('setDomTest');
+
+          doLiquidTemplateTest2(elt);
+        });
+
+        test('test 3', function() {
+          var elt = fixture('setDomTest');
+
+          doLiquidTemplateTest3(elt);
+        });
+
+        test('test 4', function(done) {
+          var elt = fixture('setDomTest');
+
+          doLiquidTemplateTest4(elt, done);
+        });
+      });
+
+    </script>
+
+  </body>
+
+</html>
