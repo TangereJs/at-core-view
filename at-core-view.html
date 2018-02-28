@@ -70,7 +70,8 @@
           xtype: 'enum',
           xvaluelist: [
             { title: "Replace", value: "0" },
-            { title: "Delta Update", value: "1" }
+            { title: "Delta Update", value: "1" },
+            { title: "Set Dom", value: "2" }
           ]
         }
       },
@@ -239,7 +240,9 @@
 
           var html = tmpl.render(root);
 
-          if (this.updateMode === "1" && !this._isFirstRender) {
+          var useSetDom = this.updateMode === "2" || (this.updateMode === "1" && !this._isFirstRender);
+
+          if (useSetDom) {
             // place html into div.innerHTML so we have div's children prepared ahead of time
             var div = document.createElement('div');
             Polymer.dom(div).innerHTML = html;
@@ -301,10 +304,6 @@
                 this.scopeSubtree(node);
               }
             }, this);
-
-          // we will use separate else branch because if updateMode is set to something other that 1 or 0 (by mistake) we want to detect that mistake
-          } else if (this.updateMode === "1" && this._isFirstRender) {
-            Polymer.dom(this.root).innerHTML = html;
 
           } else if (this.updateMode === "0") {
             Polymer.dom(this.root).innerHTML = html;
