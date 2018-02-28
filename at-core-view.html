@@ -139,7 +139,7 @@
         // otherwise we skip the placeholder and allow setDOM to update the innerHTML
 
         var feChild = Polymer.dom(this.root).firstElementChild;
-        var isFirstRender = feChild === null || feChild.nodeName === "TEMPLATE";
+        var isFirstRender = this._isFirstRender = feChild === null || feChild.nodeName === "TEMPLATE";
 
         if (isFirstRender && this.placeholder && this.view) Polymer.dom(this).innerHTML = this.placeholder;
         Polymer.dom.flush();
@@ -239,7 +239,7 @@
 
           var html = tmpl.render(root);
 
-          if (this.updateMode === "1") {
+          if (this.updateMode === "1" && !this._isFirstRender) {
             // place html into div.innerHTML so we have div's children prepared ahead of time
             var div = document.createElement('div');
             Polymer.dom(div).innerHTML = html;
