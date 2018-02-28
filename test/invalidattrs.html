@@ -1,0 +1,207 @@
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>setdom library tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="../../at-form-text/at-form-text.html" />
+    <link rel="import" href="../../at-form-checkbox/at-form-checkbox.html" />
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
+  </head>
+
+  <body>
+
+    <test-fixture id="tests">
+      <template>
+        <at-core-view update-mode="1"></at-core-view>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('invalid attrs', function() {
+        
+        test('invalid attrs on custom elements', function(done) {
+          var elt = fixture('tests');
+            
+          var viewValue1 = 
+            '<at-form-text id="first" label="label 1" placeholder="placeholder 1"></at-form-text>' + 
+            '<at-form-text id="second" label="label 2" placeholder="placeholder 2"></at-form-text>' + 
+            '<at-form-text id="third" label="label 3" placeholder="placeholder 3"></at-form-text>';
+
+          var viewValue2 = 
+            '<at-form-text id="second" label="label 2" "demoattr1" placeholder="placeholder 2"></at-form-text>' + 
+            '<at-form-text id="first" label="label 1" "demoattr2" placeholder="placeholder 1"></at-form-text>' + 
+            '<at-form-text id="third" label="label 3" "demoattr3" placeholder="placeholder 3"></at-form-text>';
+
+          var viewValue3 = 
+            '<at-form-text id="second" label="label 2" "loremattr3" placeholder="placeholder 2"></at-form-text>' + 
+            '<at-form-text id="third" label="label 3" "loremattr2" placeholder="placeholder 3"></at-form-text>' + 
+            '<at-form-text id="first" label="label 1" "loremattr1" placeholder="placeholder 1"></at-form-text>';
+
+          elt.addEventListener('content-changed', handleContentChanged1);
+          elt.view = viewValue1;
+
+          var ref1, ref2, ref3;
+
+          function assertLabelAndPlaceholder(elt, label, placeholder) {
+            assert.equal(elt.hasAttribute("label"), true);
+            assert.equal(elt.hasAttribute("placeholder"), true);
+            assert.equal(elt.label, label);
+            assert.equal(elt.placeholder, placeholder);
+          }
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            ref1 = elt.querySelector('#first');
+            ref2 = elt.querySelector('#second');
+            ref3 = elt.querySelector('#third');
+            
+            assert.isNotNull(ref1);
+            assert.isNotNull(ref2);
+            assert.isNotNull(ref3);
+            
+            assertLabelAndPlaceholder(ref1, "label 1", "placeholder 1");
+            assertLabelAndPlaceholder(ref2, "label 2", "placeholder 2");
+            assertLabelAndPlaceholder(ref3, "label 3", "placeholder 3");
+
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            elt1 = elt.querySelector('#first');
+            elt2 = elt.querySelector('#second');
+            elt3 = elt.querySelector('#third');
+
+            assert.equal(elt1 === ref2, true);
+            assert.equal(elt2 === ref1, true);
+            assert.equal(elt3 === ref3, true);
+
+            assertLabelAndPlaceholder(elt1, "label 1", "placeholder 1");
+            assertLabelAndPlaceholder(elt2, "label 2", "placeholder 2");
+            assertLabelAndPlaceholder(elt3, "label 3", "placeholder 3");
+
+            elt.addEventListener('content-changed', handleContentChanged3);
+            elt.view = viewValue3;
+          }
+          
+          function handleContentChanged3(event) {
+            elt.removeEventListener('content-changed', handleContentChanged3);
+
+            elt1 = elt.querySelector('#first');
+            elt2 = elt.querySelector('#second');
+            elt3 = elt.querySelector('#third');
+            
+            assert.equal(elt1 === ref3, true);
+            assert.equal(elt2 === ref1, true);
+            assert.equal(elt3 === ref2, true);
+
+            assertLabelAndPlaceholder(elt1, "label 1", "placeholder 1");
+            assertLabelAndPlaceholder(elt2, "label 2", "placeholder 2");
+            assertLabelAndPlaceholder(elt3, "label 3", "placeholder 3");
+            
+            done();
+          }
+
+        });
+
+
+        test('invalid attrs on plain html elements', function(done) {
+          var elt = fixture('tests');
+            
+          var viewValue1 = 
+            '<div id="first" tabindex="1" lang="en1"></div>' + 
+            '<div id="second" tabindex="2" lang="en2"></div>' + 
+            '<div id="third" tabindex="3" lang="en3"></div>';
+
+          var viewValue2 = 
+            '<div id="second" tabindex="2" "invattr1" lang="en2"></div>' + 
+            '<div id="first" tabindex="1" "invattr3" lang="en1"></div>' + 
+            '<div id="third" tabindex="3" "invattr2" lang="en3"></div>';
+
+          var viewValue3 = 
+            '<div id="second" tabindex="2" "invattr3" lang="en2"></div>' + 
+            '<div id="third" tabindex="3" "invattr2" lang="en3"></div>' + 
+            '<div id="first" tabindex="1" "invattr1" lang="en1"></div>';
+
+          elt.addEventListener('content-changed', handleContentChanged1);
+          elt.view = viewValue1;
+
+          var ref1, ref2, ref3;
+
+          function assertTabindexAndLang(elt, tabindex, lang) {
+            assert.equal(elt.hasAttribute("tabindex"), true);
+            assert.equal(elt.hasAttribute("lang"), true);
+            assert.equal(elt.getAttribute('tabindex'), tabindex);
+            assert.equal(elt.getAttribute('lang'), lang);
+          }
+
+          function handleContentChanged1(event) {
+            elt.removeEventListener('content-changed', handleContentChanged1);
+
+            ref1 = elt.querySelector('#first');
+            ref2 = elt.querySelector('#second');
+            ref3 = elt.querySelector('#third');
+            
+            assert.isNotNull(ref1);
+            assert.isNotNull(ref2);
+            assert.isNotNull(ref3);
+            
+            assertTabindexAndLang(ref1, "1", "en1");
+            assertTabindexAndLang(ref2, "2", "en2");
+            assertTabindexAndLang(ref3, "3", "en3");
+
+            elt.addEventListener('content-changed', handleContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+
+            elt1 = elt.querySelector('#first');
+            elt2 = elt.querySelector('#second');
+            elt3 = elt.querySelector('#third');
+
+            assert.equal(elt1 === ref2, true);
+            assert.equal(elt2 === ref1, true);
+            assert.equal(elt3 === ref3, true);
+
+            assertTabindexAndLang(elt1, "1", "en1");
+            assertTabindexAndLang(elt2, "2", "en2");
+            assertTabindexAndLang(elt3, "3", "en3");
+
+            elt.addEventListener('content-changed', handleContentChanged3);
+            elt.view = viewValue3;
+          }
+          
+          function handleContentChanged3(event) {
+            elt.removeEventListener('content-changed', handleContentChanged3);
+
+            elt1 = elt.querySelector('#first');
+            elt2 = elt.querySelector('#second');
+            elt3 = elt.querySelector('#third');
+            
+            assert.equal(elt1 === ref3, true);
+            assert.equal(elt2 === ref1, true);
+            assert.equal(elt3 === ref2, true);
+
+            assertTabindexAndLang(elt1, "1", "en1");
+            assertTabindexAndLang(elt2, "2", "en2");
+            assertTabindexAndLang(elt3, "3", "en3");
+            
+            done();
+          }
+
+        });
+      });
+    </script>
+  </body>
+</html>
+
+
