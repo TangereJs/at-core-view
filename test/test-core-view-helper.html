@@ -1,0 +1,66 @@
+<link rel="import" href="../../tangere/tangere.html" />
+<link rel="import" href="../../at-form-text/at-form-text.html" />
+<link rel="import" href="../at-core-view.html" />
+
+<dom-module id="test-core-view-helper">
+  <template>
+    <style>
+      :host {
+        display: block;
+        box-sizing: border-box;
+      }
+    </style>
+      
+    <div id="disconnectedDiv"></div>
+
+    <at-core-view id="coreView"
+      model="[[model]]"
+      update-mode="[[updateMode]]"
+    ></at-core-view>
+
+  </template>
+</dom-module>
+<script>
+  Polymer({
+    is: "test-core-view-helper",
+    properties: {
+      model: {
+        type: Object,
+        value: null
+      },
+
+      updateMode: {
+        type: String,
+        value: "1",
+        xtype: 'enum',
+        xvaluelist: [
+          { title: "Replace", value: "0" },
+          { title: "Delta Update", value: "1" },
+          { title: "Set Dom", value: "2" }
+        ]
+      },
+
+      view: {
+        type: String,
+        value: '',
+      }
+    },
+
+    observers: [
+      '_computeDisconnectedDivInnerHtml(model, view)'
+    ],
+
+    _computeDisconnectedDivInnerHtml: function(model, view) {
+      var parsedTemplate = window.Liquid.parse(view);
+      var html = parsedTemplate.render(model);
+
+      Polymer.dom(this.$.disconnectedDiv).innerHTML = html;
+
+      this.$.coreView.view = view;
+    },
+
+    ready: function () {
+
+    }
+  });
+</script>

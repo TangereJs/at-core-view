@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="test-core-view-helper.html" />
     <link rel="import" href="../../at-form-text/at-form-text.html" />
     <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
   </head>
@@ -16,13 +16,13 @@
 
     <test-fixture id="innerHTMLTest">
       <template>
-        <at-core-view update-mode="0"></at-core-view>
+        <test-core-view-helper update-mode="0"></test-core-view-helper>
       </template>
     </test-fixture>
 
     <test-fixture id="setDomTest">
       <template>
-        <at-core-view update-mode="2"></at-core-view>
+        <test-core-view-helper update-mode="2"></test-core-view-helper>
       </template>
     </test-fixture>
 
@@ -203,643 +203,1034 @@
         });
       }
 
-      // apply style-scope to elt by using scopeParent.scopeSubtree
-      function scopeElt(elt, scopeParent) {
-        Array.prototype.forEach.call(elt.childNodes, function(node) {
-          scopeParent.scopeSubtree(node);
-        });
-      }
-
-
-      function doStaticHTMLTest1(elt) {
-
-        var viewValue = '<span id="first">aaa</span>';
-        elt.view = viewValue;
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = viewValue;
-
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-        
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
+      function assertContainersEqual(cont1, cont2) {
+        assertPdChildrenEquals(cont1, cont2);
+        assertPdChildNodesEquals(cont1, cont2);
+        assertPdInnerHTMLEquals(cont1, cont2);
 
         // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
+        var expectedNodes = cont2.childNodes;
+        var actualNodes = cont1.childNodes;
 
         Array.prototype.forEach.call(actualNodes, function(actNode, index) {
           var expNode = expectedNodes[index];
           
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
+          assertNodesEqual(actNode, expNode, cont1, cont2);
         });
-
-        var viewValue2 = '<span id="first">bbb</span>';
-        elt.view = viewValue2;
-
-        discDiv.innerHTML = viewValue2;
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        ihCont = discDiv;
-        // repeat tests
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-      }
-
-      function doStaticHTMLTest2(elt) {
-        var viewValue = '<span id="first">aaa<span id="second">222<span id="third">333</span></span></span>';
-        elt.view = viewValue;
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = viewValue;
-
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-
-        var viewValue2 = '<span id="first">aaa<span id="second">222</span></span>';
-        elt.view = viewValue2;
-
-        discDiv = document.createElement('div');
-        discDiv.innerHTML = viewValue2;
-
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        ihCont = discDiv;
-        // repeat tests
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-      }
-
-      function doStaticHTMLTest3(elt) {
-        var viewValue = '<div><input type="text" id="input1"/><div>bbb</div></div>';
-        elt.view = viewValue;
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = viewValue;
-
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-
-        var viewValue2 = '<div><input type="text" id="input1"/><div>ccc</div></div>';
-        elt.view = viewValue2;
-
-        discDiv = document.createElement('div');
-        discDiv.innerHTML = viewValue2;
-
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        ihCont = discDiv;
-        // repeat tests
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-      }
-
-      function doStaticHTMLTest4(elt, done) {
-        var viewValue = '<div><at-form-text id="input1"></at-form-text></div>';
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = viewValue;
-
-        // Polymer.dom().innerHTML doesn't perform style-scoping
-        // scopeElt(discDiv, elt);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-
-        // when custom elements are used we need to wait for content-changed event because 
-        // at-core-view imports the element(s)
-        elt.addEventListener('content-changed', viewContentChanged);
-        elt.view = viewValue;
-
-        function viewContentChanged(event) {
-          elt.removeEventListener('content-changed', viewContentChanged);
-
-          assertPdChildrenEquals(sdCont, ihCont);
-          assertPdChildNodesEquals(sdCont, ihCont);
-          assertPdInnerHTMLEquals(sdCont, ihCont);
-
-          // assert that Polymer.dom api returns same results
-          var expectedNodes = discDiv.childNodes;
-          var actualNodes = elt.root.childNodes;
-
-          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-            var expNode = expectedNodes[index];
-
-            assertNodesEqual(actNode, expNode, sdCont, ihCont);
-          });
-
-          // set placeholder
-          var viewValue2 = '<div><at-form-text id="input1" value="abc"></at-form-text></div>';
-
-          discDiv = document.createElement('div');
-          discDiv.innerHTML = viewValue2;
-          ihCont = discDiv;
-
-          // Polymer.dom().innerHTML doesn't perform style-scoping
-          // scopeElt(discDiv, elt);
-
-          elt.addEventListener('content-changed', view2ContentChanged);
-          elt.view = viewValue2;
-        }
-
-        function view2ContentChanged(event) {
-          elt.removeEventListener('content-changed', view2ContentChanged);
-
-          // repeat tests
-          assertPdChildrenEquals(sdCont, ihCont);
-          assertPdChildNodesEquals(sdCont, ihCont);
-          assertPdInnerHTMLEquals(sdCont, ihCont);
-
-          // assert that Polymer.dom api returns same results
-          var expectedNodes = discDiv.childNodes;
-          var actualNodes = elt.root.childNodes;
-
-          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-            var expNode = expectedNodes[index];
-
-            assertNodesEqual(actNode, expNode, sdCont, ihCont);
-          });
-          
-          done();
-        }
       }
 
       suite('compare disconnected div innerHTML with at-core-view updateMode replace', function() {
-        test('test 1', function() {
+        test('test view with single element', function() {
           var elt = fixture('innerHTMLTest');
 
-          doStaticHTMLTest1(elt);
-        });
+          var viewValue = '<span id="first">aaa</span>';
+          elt.view = viewValue;
 
-        test('test 2', function() {
-          var elt = fixture('innerHTMLTest');
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
 
-          doStaticHTMLTest2(elt);
-        });
+          assertContainersEqual(sdCont, ihCont);
 
-        test('test 3', function() {
-          var elt = fixture('innerHTMLTest');
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa');
 
-          doStaticHTMLTest3(elt);
-        });
-
-        test('test 4', function(done) {
-          var elt = fixture('innerHTMLTest');
-
-          doStaticHTMLTest4(elt, done);
-        });
-      });
-
-      suite('compare disconnected div innerHTML with at-core-view updateMode setDOM', function() {
-        test('test 1', function() {
-          var elt = fixture('setDomTest');
-
-          doStaticHTMLTest1(elt);
-        });
-
-        test('test 2', function() {
-          var elt = fixture('setDomTest');
-
-          doStaticHTMLTest2(elt);
-        });
-
-        test('test 3', function() {
-          var elt = fixture('setDomTest');
-
-          doStaticHTMLTest3(elt);
-        });
-
-        test('test 4', function(done) {
-          var elt = fixture('setDomTest');
-          
-          doStaticHTMLTest4(elt, done);
-        });
-      });
-
-      function doLiquidTemplateTest1(elt) {
-        var model = {
-          prop1: 'prop1Value'
-        };
-
-        elt.model = model;
-
-        var viewValue = '<span id="first">aaa {{prop1}}</span>';
-        elt.view = viewValue;
-
-        var tmpl = window.Liquid.parse(viewValue);
-        var complTempl = tmpl.render(model);
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = complTempl;
-
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-          
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-
-        var sdContFCBefore = Polymer.dom(sdCont).firstChild;
-        
-        var viewValue2 = '<span id="first">bbb {{prop1}}</span>';
-        elt.view = viewValue2;
-
-        tmpl = window.Liquid.parse(viewValue2);
-        complTempl = tmpl.render(model);
-
-        discDiv.innerHTML = complTempl;
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        ihCont = discDiv;
-        // repeat tests
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-
-        var sdContFCAfter = Polymer.dom(sdCont).firstChild;
-        var eq = sdContFCAfter.isSameNode(sdContFCBefore);
-        // assert.equal(eq, true);
-      }
-
-      function doLiquidTemplateTest2(elt) {
-        var model = {
-          prop1: 'prop1Value',
-          prop2: 'prop2Value',
-          prop3: 'prop3Value'
-        };
-        elt.model = model;
-        var viewValue = '<span id="first">aaa {{prop1}}<span id="second">222 {{prop2}}<span id="third">333 {{prop3}}</span></span></span>';
-        elt.view = viewValue;
-
-        var tmpl = window.Liquid.parse(viewValue);
-        var complTempl = tmpl.render(model);
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = complTempl;
-
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-
-        var sdContFCBefore = Polymer.dom(sdCont).firstChild;
-        var viewValue2 = '<span id="first">aaa {{prop1}}<span id="second">222 {{prop2}}</span></span>';
-        elt.view = viewValue2;
-
-        tmpl = window.Liquid.parse(viewValue2);
-        complTempl = tmpl.render(model);
-
-        discDiv = document.createElement('div');
-        discDiv.innerHTML = complTempl;
-
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        ihCont = discDiv;
-        // repeat tests
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-        
-        var sdContFCAfter = Polymer.dom(sdCont).firstChild;
-        var eq = sdContFCAfter.isSameNode(sdContFCBefore);
-        // assert.equal(eq, true);
-      }
-
-      function doLiquidTemplateTest3(elt) {
-        var model = {
-          prop1: 'prop1Value',
-          prop2: 'prop2Value',
-          prop3: 'prop3Value'
-        };
-        elt.model = model;
-        var viewValue = '<div>{{prop1}}<input type="text" id="input1" value="{{prop2}}"/><div>bbb{{prop3}}</div></div>';
-        elt.view = viewValue;
-
-        var tmpl = Liquid.parse(viewValue);
-        var complTempl = tmpl.render(model);
-
-        var discDiv = document.createElement('div');
-        discDiv.innerHTML = complTempl;
-
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-
-        // set placeholder
-        var sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
-        Polymer.dom(sdInputRefBefore).setAttribute('placeholder', 'lorem ipsum');
-
-        var viewValue2 = '<div>{{prop1}}<input type="text" id="input1" value="{{prop2}}"/><div>ccc{{prop3}}</div></div>';
-        elt.view = viewValue2;
-
-        tmpl = Liquid.parse(viewValue2);
-        complTempl = tmpl.render(model);
-
-        discDiv = document.createElement('div');
-        discDiv.innerHTML = complTempl;
-
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        ihCont = discDiv;
-        // repeat tests
-        assertPdChildrenEquals(sdCont, ihCont);
-        assertPdChildNodesEquals(sdCont, ihCont);
-        assertPdInnerHTMLEquals(sdCont, ihCont);
-
-        // assert that Polymer.dom api returns same results
-        var expectedNodes = discDiv.childNodes;
-        var actualNodes = elt.root.childNodes;
-
-        Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-          var expNode = expectedNodes[index];
-
-          assertNodesEqual(actNode, expNode, sdCont, ihCont);
-        });
-        
-        // query placeholder
-        var sdInputRefAfter = Polymer.dom(sdCont).querySelector('#input1');          
-        var placeholderVal = sdInputRefAfter.getAttribute('placeholder');
-
-        var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
-        // assert.equal(eq, true);
-
-        assert.equal(placeholderVal, null);
-      }
-
-      function doLiquidTemplateTest4(elt, done) {
-        var model = {
-          prop1: 'prop1Value',
-          prop2: 'prop2Value',
-          prop3: 'prop3Value'
-        };
-        elt.model = model;
-
-        var viewValue = '<div>{{prop1}}<at-form-text id="input1" value="{{prop2}}"></at-form-text>{{prop3}}</div>';
-
-        var tmpl = Liquid.parse(viewValue);
-        var complTempl = tmpl.render(model);
-
-        discDiv = document.createElement('div');
-        discDiv.innerHTML = complTempl;
-
-        // elt.scopeSubtree(discDiv.firstChild);
-
-        var sdCont = elt.root;
-        var ihCont = discDiv;
-
-        // when custom elements are used we need to wait for content-changed event because 
-        // at-core-view imports the element(s)
-        elt.addEventListener('content-changed', viewContentChanged);
-        elt.view = viewValue;
-        var sdInputRefBefore;
-        function viewContentChanged(event) {
-          elt.removeEventListener('content-changed', viewContentChanged);
-
-          assertPdChildrenEquals(sdCont, ihCont);
-          assertPdChildNodesEquals(sdCont, ihCont);
-          assertPdInnerHTMLEquals(sdCont, ihCont);
-
-          // assert that Polymer.dom api returns same results
-          var expectedNodes = discDiv.childNodes;
-          var actualNodes = elt.root.childNodes;
-
-          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-            var expNode = expectedNodes[index];
-
-            assertNodesEqual(actNode, expNode, sdCont, ihCont);
-          });
-
-          // set placeholder
-          sdInputRefBefore = Polymer.dom(sdCont).querySelector('#input1');
-          sdInputRefBefore._abc = 'abc';
-          var viewValue2 = '<div>{{prop1}}<at-form-text id="input1" value="{{prop2}}" attr1="val1"></at-form-text>{{prop3}}</div>';
-
-          tmpl = Liquid.parse(viewValue2);
-          complTempl = tmpl.render(model);
-
-          discDiv = document.createElement('div');
-          discDiv.innerHTML = complTempl;
-
-          // elt.scopeSubtree(discDiv.firstChild);
-
-          ihCont = discDiv;
-
-          elt.addEventListener('content-changed', view2ContentChanged);
+          var viewValue2 = '<span id="first">bbb</span>';
           elt.view = viewValue2;
-        }
 
-        function view2ContentChanged(event) {
-          elt.removeEventListener('content-changed', view2ContentChanged);
+          assertContainersEqual(sdCont, ihCont);
 
-          // repeat tests
-          assertPdChildrenEquals(sdCont, ihCont);
-          assertPdChildNodesEquals(sdCont, ihCont);
-          assertPdInnerHTMLEquals(sdCont, ihCont);
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'bbb');
 
-          // assert that Polymer.dom api returns same results
-          var expectedNodes = discDiv.childNodes;
-          var actualNodes = elt.root.childNodes;
-
-          Array.prototype.forEach.call(actualNodes, function(actNode, index) {
-            var expNode = expectedNodes[index];
-
-            assertNodesEqual(actNode, expNode, sdCont, ihCont);
-          });
-          
-          // query placeholder
-          var sdInputRefAfter = Polymer.dom(sdCont).querySelector('#input1');
-          var abcVal = sdInputRefAfter._abc;
-
-          var eq = sdInputRefBefore.isSameNode(sdInputRefAfter);
-          // assert.equal(eq, true);
-
-          done();
-        }
-      }
-
-      suite('compare disconnected div innerHTML with at-core-view updateMode replace', function() {
-        test('test 1', function() {
-          var elt = fixture('innerHTMLTest');
-
-          doLiquidTemplateTest1(elt);
+          // update mode replace is destructive so memory locations are not the same
+          assert.equal(firstRef1 !== firstRef2, true);
         });
 
-        test('test 2', function() {
+        test('test view with multiple elements making wide tree', function() {
           var elt = fixture('innerHTMLTest');
 
-          doLiquidTemplateTest2(elt);
+          var viewValue = '<span id="first">aaa</span>' + 
+            '<span id="second">bbb</span>' + 
+            '<span id="third">ccc</span>' + 
+            '<span id="fourth">ddd</span>';
+          elt.view = viewValue;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbb');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'ccc');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd');
+
+          var viewValue2 = '<span id="first">ddd</span>' + 
+            '<span id="second">ccc</span>' + 
+            '<span id="third">bbb</span>' + 
+            '<span id="fourth">aaa</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'ddd');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'ccc');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbb');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa');
+
+          // update mode replace is destructive so memory locations are not the same
+          assert.equal(firstRef1 !== firstRef2, true);
+          assert.equal(secondRef1 !== secondRef2, true);
+          assert.equal(thirdRef1 !== thirdRef2, true);
+          assert.equal(fourthRef1 !== fourthRef2, true);
         });
 
-        test('test 3', function() {
+        test('test view with multiple elements making deep tree', function() {
           var elt = fixture('innerHTMLTest');
 
-          doLiquidTemplateTest3(elt);
+          var viewValue = '<span id="first">aaa<span id="second">bbb<span id="third">ccc<span id="fourth">ddd</span></span></span></span>';
+          elt.view = viewValue;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaabbbcccddd');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbbcccddd');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'cccddd');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd');
+
+          var viewValue2 = '<span id="first">ddd<span id="second">ccc<span id="third">bbb<span id="fourth">aaa</span></span></span></span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'dddcccbbbaaa');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'cccbbbaaa');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbbaaa');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa');
+
+          // update mode replace is destructive so memory locations are not the same
+          assert.equal(firstRef1 !== firstRef2, true);
+          assert.equal(secondRef1 !== secondRef2, true);
+          assert.equal(thirdRef1 !== thirdRef2, true);
+          assert.equal(fourthRef1 !== fourthRef2, true);
         });
 
-        test('test 4', function(done) {
+        test('test view with single custom element', function(done) {
           var elt = fixture('innerHTMLTest');
 
-          doLiquidTemplateTest4(elt, done);
+          var viewValue = '<at-form-text id="first" value="lorem"></at-form-text>';
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'lorem');
+
+            var viewValue2 = '<at-form-text id="first" value="ipsum"></at-form-text>';
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'ipsum');
+
+            assert.equal(firstRef1 !== firstRef2, true);
+
+            done();
+          }
         });
+
+        test('test view with multiple custom elements making a wide tree', function(done) {
+          var elt = fixture('innerHTMLTest');
+
+          var viewValue = 
+            '<at-form-text id="first" value="lorem1"></at-form-text>' +
+            '<at-form-text id="second" value="lorem2"></at-form-text>' + 
+            '<at-form-text id="third" value="lorem3"></at-form-text>' +
+            '<at-form-text id="fourth" value="lorem4"></at-form-text>';
+
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+          var firstRef2;
+          var firstRef3;
+          var firstRef4;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'lorem1');
+            secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef1.value, 'lorem2');
+            thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef1.value, 'lorem3');
+            fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef1.value, 'lorem4');
+
+            var viewValue2 = 
+              '<at-form-text id="first" value="ipsum1"></at-form-text>' +
+              '<at-form-text id="second" value="ipsum2"></at-form-text>' + 
+              '<at-form-text id="third" value="ipsum3"></at-form-text>' +
+              '<at-form-text id="fourth" value="ipsum4"></at-form-text>';
+
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'ipsum1');
+            var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef2.value, 'ipsum2');
+            var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef2.value, 'ipsum3');
+            var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef2.value, 'ipsum4');
+
+            assert.equal(firstRef1 !== firstRef2, true);
+            assert.equal(secondRef1 !== secondRef2, true);
+            assert.equal(thirdRef1 !== thirdRef2, true);
+            assert.equal(fourthRef1 !== fourthRef2, true);
+
+            done();
+          }
+        });
+
       });
 
       suite('compare disconnected div innerHTML with at-core-view updateMode setDOM', function() {
-        test('test 1', function() {
+        test('test view with single element', function() {
           var elt = fixture('setDomTest');
 
-          doLiquidTemplateTest1(elt);
+          var viewValue = '<span id="first">aaa</span>';
+          elt.view = viewValue;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa');
+
+          var viewValue2 = '<span id="first">bbb</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'bbb');
+
+          // update mode replace is destructive so memory locations are not the same
+          assert.equal(firstRef1 === firstRef2, true);
         });
 
-        test('test 2', function() {
+        test('test view with multiple elements making wide tree', function() {
           var elt = fixture('setDomTest');
 
-          doLiquidTemplateTest2(elt);
+          var viewValue = '<span id="first">aaa</span>' + 
+            '<span id="second">bbb</span>' + 
+            '<span id="third">ccc</span>' + 
+            '<span id="fourth">ddd</span>';
+          elt.view = viewValue;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbb');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'ccc');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd');
+
+          var viewValue2 = '<span id="first">ddd</span>' + 
+            '<span id="second">ccc</span>' + 
+            '<span id="third">bbb</span>' + 
+            '<span id="fourth">aaa</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'ddd');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'ccc');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbb');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa');
+
+          // update mode replace is destructive so memory locations are not the same
+          assert.equal(firstRef1 === firstRef2, true);
+          assert.equal(secondRef1 === secondRef2, true);
+          assert.equal(thirdRef1 === thirdRef2, true);
+          assert.equal(fourthRef1 === fourthRef2, true);
         });
 
-        test('test 3', function() {
+        test('test view with multiple elements making deep tree', function() {
           var elt = fixture('setDomTest');
 
-          doLiquidTemplateTest3(elt);
+          var viewValue = '<span id="first">aaa<span id="second">bbb<span id="third">ccc<span id="fourth">ddd</span></span></span></span>';
+          elt.view = viewValue;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaabbbcccddd');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbbcccddd');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'cccddd');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd');
+
+          var viewValue2 = '<span id="first">ddd<span id="second">ccc<span id="third">bbb<span id="fourth">aaa</span></span></span></span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'dddcccbbbaaa');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'cccbbbaaa');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbbaaa');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa');
+
+          // update mode replace is destructive so memory locations are not the same
+          assert.equal(firstRef1 === firstRef2, true);
+          assert.equal(secondRef1 === secondRef2, true);
+          assert.equal(thirdRef1 === thirdRef2, true);
+          assert.equal(fourthRef1 === fourthRef2, true);
         });
 
-        test('test 4', function(done) {
+        test('test view with single custom element', function(done) {
           var elt = fixture('setDomTest');
 
-          doLiquidTemplateTest4(elt, done);
+          var viewValue = '<at-form-text id="first" value="lorem"></at-form-text>';
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'lorem');
+
+            var viewValue2 = '<at-form-text id="first" value="ipsum"></at-form-text>';
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'ipsum');
+
+            assert.equal(firstRef1 === firstRef2, true);
+
+            done();
+          }
+        });
+
+        test('test view with multiple custom elements making a wide tree', function(done) {
+          var elt = fixture('setDomTest');
+
+          var viewValue = 
+            '<at-form-text id="first" value="lorem1"></at-form-text>' +
+            '<at-form-text id="second" value="lorem2"></at-form-text>' + 
+            '<at-form-text id="third" value="lorem3"></at-form-text>' +
+            '<at-form-text id="fourth" value="lorem4"></at-form-text>';
+
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+          var firstRef2;
+          var firstRef3;
+          var firstRef4;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'lorem1');
+            secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef1.value, 'lorem2');
+            thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef1.value, 'lorem3');
+            fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef1.value, 'lorem4');
+
+            var viewValue2 = 
+              '<at-form-text id="first" value="ipsum1"></at-form-text>' +
+              '<at-form-text id="second" value="ipsum2"></at-form-text>' + 
+              '<at-form-text id="third" value="ipsum3"></at-form-text>' +
+              '<at-form-text id="fourth" value="ipsum4"></at-form-text>';
+
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'ipsum1');
+            var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef2.value, 'ipsum2');
+            var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef2.value, 'ipsum3');
+            var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef2.value, 'ipsum4');
+
+            assert.equal(firstRef1 === firstRef2, true);
+            assert.equal(secondRef1 === secondRef2, true);
+            assert.equal(thirdRef1 === thirdRef2, true);
+            assert.equal(fourthRef1 === fourthRef2, true);
+
+            done();
+          }
+        });
+      });
+
+      suite('liquid template compare disconnected div innerHTML with at-core-view updateMode replace', function() {
+        test('test template with single element', function() {
+          var elt = fixture('innerHTMLTest');
+
+          var model = {
+            prop1: 'prop1Value'
+          };
+          elt.model = model;
+
+          var viewValue1 = '<span id="first">aaa {{prop1}}</span>';
+          elt.view = viewValue1;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa prop1Value');
+
+          var viewValue2 = '<span id="first">bbb {{prop1}}</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'bbb prop1Value');
+
+          assert.equal(firstRef1 !== firstRef2, true);
+        });
+
+        test('test template with multiple elements making a wide tree', function() {
+          var elt = fixture('innerHTMLTest');
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value',
+            prop3: 'prop3Value',
+            prop4: 'prop4Value'
+          };
+          elt.model = model;
+
+          var viewValue1 = 
+            '<span id="first">aaa {{prop1}}</span>' + 
+            '<span id="second">bbb {{prop2}}</span>' + 
+            '<span id="third">ccc {{prop3}}</span>' + 
+            '<span id="fourth">ddd {{prop4}}</span>';
+          elt.view = viewValue1;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa prop1Value');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbb prop2Value');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'ccc prop3Value');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd prop4Value');
+
+          var viewValue2 = 
+            '<span id="first">ddd {{prop4}}</span>' + 
+            '<span id="second">ccc {{prop2}}</span>' + 
+            '<span id="third">bbb {{prop1}}</span>' + 
+            '<span id="fourth">aaa {{prop3}}</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'ddd prop4Value');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'ccc prop2Value');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbb prop1Value');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa prop3Value');
+
+          assert.equal(firstRef1 !== firstRef2, true);
+          assert.equal(secondRef1 !== secondRef2, true);
+          assert.equal(thirdRef1 !== thirdRef2, true);
+          assert.equal(fourthRef1 !== fourthRef2, true);
+        });
+
+        test('test view with multiple elements making deep tree', function() {
+          var elt = fixture('innerHTMLTest');
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value',
+            prop3: 'prop3Value',
+            prop4: 'prop4Value'
+          };
+          elt.model = model;          
+
+          var viewValue1 = 
+            '<span id="first">aaa {{prop1}}' +
+            '<span id="second">bbb {{prop2}}' +
+            '<span id="third">ccc {{prop3}}' + 
+            '<span id="fourth">ddd {{prop4}}' +
+            '</span></span></span></span>';
+          elt.view = viewValue1;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa prop1Valuebbb prop2Valueccc prop3Valueddd prop4Value');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbb prop2Valueccc prop3Valueddd prop4Value');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'ccc prop3Valueddd prop4Value');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd prop4Value');
+
+          var viewValue2 = 
+            '<span id="first">ddd {{prop4}}' +
+            '<span id="second">ccc {{prop2}}' +
+            '<span id="third">bbb {{prop1}}' + 
+            '<span id="fourth">aaa {{prop3}}' +
+            '</span></span></span></span>';
+          elt.view = viewValue2;
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'ddd prop4Valueccc prop2Valuebbb prop1Valueaaa prop3Value');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'ccc prop2Valuebbb prop1Valueaaa prop3Value');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbb prop1Valueaaa prop3Value');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa prop3Value');
+
+          assert.equal(firstRef1 !== firstRef2, true);
+          assert.equal(secondRef1 !== secondRef2, true);
+          assert.equal(thirdRef1 !== thirdRef2, true);
+          assert.equal(fourthRef1 !== fourthRef2, true);
+        });
+
+        test('test view with single custom element', function(done) {
+          var elt = fixture('innerHTMLTest');
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value'
+          };
+          elt.model = model;
+
+          var viewValue = '<at-form-text id="first" value="{{prop1}}"></at-form-text>';
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'prop1Value');
+
+            var viewValue2 = '<at-form-text id="first" value="{{prop1}}" label="{{prop2}}"></at-form-text>';
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'prop1Value');
+            assert.equal(firstRef2.label, 'prop2Value');
+
+            assert.equal(firstRef1 !== firstRef2, true);
+
+            done();
+          }
+        });
+
+        test('test view with multiple custom elements making a wide tree', function(done) {
+          var elt = fixture('innerHTMLTest');
+
+          var model = {
+            value1: 'value1',
+            label1: 'label1',
+            value2: 'value2',
+            label2: 'label2',
+            value3: 'value3',
+            label3: 'label3',
+            value4: 'value4',
+            label4: 'label4',
+          };
+          elt.model = model;
+
+          var viewValue = 
+            '<at-form-text id="first" value="{{value1}}"></at-form-text>' +
+            '<at-form-text id="second" value="{{value2}}"></at-form-text>' + 
+            '<at-form-text id="third" value="{{value3}}"></at-form-text>' +
+            '<at-form-text id="fourth" value="{{value4}}"></at-form-text>';
+
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+          var firstRef2;
+          var firstRef3;
+          var firstRef4;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'value1');
+            secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef1.value, 'value2');
+            thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef1.value, 'value3');
+            fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef1.value, 'value4');
+
+            var viewValue2 = 
+              '<at-form-text id="first" value="{{value1}}" label="{{label1}}"></at-form-text>' +
+              '<at-form-text id="second" value="{{value2}}" label="{{label2}}"></at-form-text>' + 
+              '<at-form-text id="third" value="{{value3}}" label="{{label3}}"></at-form-text>' +
+              '<at-form-text id="fourth" value="{{value4}}" label="{{label4}}"></at-form-text>';
+
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'value1');
+            assert.equal(firstRef2.label, 'label1');
+            var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef2.value, 'value2');
+            assert.equal(secondRef2.label, 'label2');
+            var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef2.value, 'value3');
+            assert.equal(thirdRef2.label, 'label3');
+            var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef2.value, 'value4');
+            assert.equal(fourthRef2.label, 'label4');
+
+            assert.equal(firstRef1 !== firstRef2, true);
+            assert.equal(secondRef1 !== secondRef2, true);
+            assert.equal(thirdRef1 !== thirdRef2, true);
+            assert.equal(fourthRef1 !== fourthRef2, true);
+
+            done();
+          }
+        });
+      });
+
+      suite('liquid template compare disconnected div innerHTML with at-core-view updateMode setDOM', function() {
+        test('test template with single element', function() {
+          var elt = fixture('setDomTest');
+
+          var model = {
+            prop1: 'prop1Value'
+          };
+          elt.model = model;
+
+          var viewValue1 = '<span id="first">aaa {{prop1}}</span>';
+          elt.view = viewValue1;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa prop1Value');
+
+          var viewValue2 = '<span id="first">bbb {{prop1}}</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'bbb prop1Value');
+
+          assert.equal(firstRef1 === firstRef2, true);
+        });
+
+        test('test template with multiple elements making a wide tree', function() {
+          var elt = fixture('setDomTest');
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value',
+            prop3: 'prop3Value',
+            prop4: 'prop4Value'
+          };
+          elt.model = model;
+
+          var viewValue1 = 
+            '<span id="first">aaa {{prop1}}</span>' + 
+            '<span id="second">bbb {{prop2}}</span>' + 
+            '<span id="third">ccc {{prop3}}</span>' + 
+            '<span id="fourth">ddd {{prop4}}</span>';
+          elt.view = viewValue1;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa prop1Value');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbb prop2Value');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'ccc prop3Value');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd prop4Value');
+
+          var viewValue2 = 
+            '<span id="first">ddd {{prop4}}</span>' + 
+            '<span id="second">ccc {{prop2}}</span>' + 
+            '<span id="third">bbb {{prop1}}</span>' + 
+            '<span id="fourth">aaa {{prop3}}</span>';
+          elt.view = viewValue2;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'ddd prop4Value');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'ccc prop2Value');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbb prop1Value');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa prop3Value');
+
+          assert.equal(firstRef1 === firstRef2, true);
+          assert.equal(secondRef1 === secondRef2, true);
+          assert.equal(thirdRef1 === thirdRef2, true);
+          assert.equal(fourthRef1 === fourthRef2, true);
+        });
+
+        test('test view with multiple elements making deep tree', function() {
+          var elt = fixture('setDomTest');
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value',
+            prop3: 'prop3Value',
+            prop4: 'prop4Value'
+          };
+          elt.model = model;          
+
+          var viewValue1 = 
+            '<span id="first">aaa {{prop1}}' +
+            '<span id="second">bbb {{prop2}}' +
+            '<span id="third">ccc {{prop3}}' + 
+            '<span id="fourth">ddd {{prop4}}' +
+            '</span></span></span></span>';
+          elt.view = viewValue1;
+
+          var sdCont = elt.$.coreView.root;
+          var ihCont = elt.$.disconnectedDiv;
+
+          assertContainersEqual(sdCont, ihCont);
+
+          var firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef1.textContent, 'aaa prop1Valuebbb prop2Valueccc prop3Valueddd prop4Value');
+          var secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef1.textContent, 'bbb prop2Valueccc prop3Valueddd prop4Value');
+          var thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef1.textContent, 'ccc prop3Valueddd prop4Value');
+          var fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef1.textContent, 'ddd prop4Value');
+
+          var viewValue2 = 
+            '<span id="first">ddd {{prop4}}' +
+            '<span id="second">ccc {{prop2}}' +
+            '<span id="third">bbb {{prop1}}' + 
+            '<span id="fourth">aaa {{prop3}}' +
+            '</span></span></span></span>';
+          elt.view = viewValue2;
+
+          var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+          assert.equal(firstRef2.textContent, 'ddd prop4Valueccc prop2Valuebbb prop1Valueaaa prop3Value');
+          var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+          assert.equal(secondRef2.textContent, 'ccc prop2Valuebbb prop1Valueaaa prop3Value');
+          var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+          assert.equal(thirdRef2.textContent, 'bbb prop1Valueaaa prop3Value');
+          var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+          assert.equal(fourthRef2.textContent, 'aaa prop3Value');
+
+          assert.equal(firstRef1 === firstRef2, true);
+          assert.equal(secondRef1 === secondRef2, true);
+          assert.equal(thirdRef1 === thirdRef2, true);
+          assert.equal(fourthRef1 === fourthRef2, true);
+        });
+
+        test('test view with single custom element', function(done) {
+          var elt = fixture('setDomTest');
+
+          var model = {
+            prop1: 'prop1Value',
+            prop2: 'prop2Value'
+          };
+          elt.model = model;
+
+          var viewValue = '<at-form-text id="first" value="{{prop1}}"></at-form-text>';
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'prop1Value');
+
+            var viewValue2 = '<at-form-text id="first" value="{{prop1}}" label="{{prop2}}"></at-form-text>';
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'prop1Value');
+            assert.equal(firstRef2.label, 'prop2Value');
+
+            assert.equal(firstRef1 === firstRef2, true);
+
+            done();
+          }
+        });
+
+        test('test view with multiple custom elements making a wide tree', function(done) {
+          var elt = fixture('setDomTest');
+
+          var model = {
+            value1: 'value1',
+            label1: 'label1',
+            value2: 'value2',
+            label2: 'label2',
+            value3: 'value3',
+            label3: 'label3',
+            value4: 'value4',
+            label4: 'label4',
+          };
+          elt.model = model;
+
+          var viewValue = 
+            '<at-form-text id="first" value="{{value1}}"></at-form-text>' +
+            '<at-form-text id="second" value="{{value2}}"></at-form-text>' + 
+            '<at-form-text id="third" value="{{value3}}"></at-form-text>' +
+            '<at-form-text id="fourth" value="{{value4}}"></at-form-text>';
+
+          elt.addEventListener('content-changed', viewContentChanged1);
+          elt.view = viewValue;
+
+          var firstRef1;
+          var firstRef2;
+          var firstRef3;
+          var firstRef4;
+
+          function viewContentChanged1(event) {
+            elt.removeEventListener('content-changed', viewContentChanged1);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+
+            assertContainersEqual(sdCont, ihCont);
+
+            firstRef1 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef1.value, 'value1');
+            secondRef1 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef1.value, 'value2');
+            thirdRef1 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef1.value, 'value3');
+            fourthRef1 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef1.value, 'value4');
+
+            var viewValue2 = 
+              '<at-form-text id="first" value="{{value1}}" label="{{label1}}"></at-form-text>' +
+              '<at-form-text id="second" value="{{value2}}" label="{{label2}}"></at-form-text>' + 
+              '<at-form-text id="third" value="{{value3}}" label="{{label3}}"></at-form-text>' +
+              '<at-form-text id="fourth" value="{{value4}}" label="{{label4}}"></at-form-text>';
+
+            elt.addEventListener('content-changed', viewContentChanged2);
+            elt.view = viewValue2;
+          }
+
+          function viewContentChanged2(event) { 
+            elt.removeEventListener('content-changed', viewContentChanged2);
+
+            var sdCont = elt.$.coreView.root;
+            var ihCont = elt.$.disconnectedDiv;
+  
+            assertContainersEqual(sdCont, ihCont);
+
+            var firstRef2 = Polymer.dom(sdCont).querySelector('#first');
+            assert.equal(firstRef2.value, 'value1');
+            assert.equal(firstRef2.label, 'label1');
+            var secondRef2 = Polymer.dom(sdCont).querySelector('#second');
+            assert.equal(secondRef2.value, 'value2');
+            assert.equal(secondRef2.label, 'label2');
+            var thirdRef2 = Polymer.dom(sdCont).querySelector('#third');
+            assert.equal(thirdRef2.value, 'value3');
+            assert.equal(thirdRef2.label, 'label3');
+            var fourthRef2 = Polymer.dom(sdCont).querySelector('#fourth');
+            assert.equal(fourthRef2.value, 'value4');
+            assert.equal(fourthRef2.label, 'label4');
+
+            assert.equal(firstRef1 === firstRef2, true);
+            assert.equal(secondRef1 === secondRef2, true);
+            assert.equal(thirdRef1 === thirdRef2, true);
+            assert.equal(fourthRef1 === fourthRef2, true);
+
+            done();
+          }
         });
       });
 
