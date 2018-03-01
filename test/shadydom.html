@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="test-core-view-helper.html">
     <link rel="import" href="../../at-form-text/at-form-text.html" />
     <link rel="import" href="../../at-form-checkbox/at-form-checkbox.html" />
     <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
@@ -16,7 +16,7 @@
 
     <test-fixture id="tests">
       <template>
-        <at-core-view update-mode="1" model-root=""></at-core-view>
+        <test-core-view-helper update-mode="2"></test-core-view-helper>
       </template>
     </test-fixture>
 
@@ -36,7 +36,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.hasAttribute("label"), true);
             assert.equal(firstRef1.hasAttribute("placeholder"), true);
@@ -52,7 +52,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef2);
             assert.equal(firstRef1 === firstRef2, true);
               
@@ -77,7 +77,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.is, "at-form-text");
 
@@ -89,7 +89,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, "at-form-checkbox"); 
 
@@ -110,7 +110,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.is, "at-form-checkbox");
 
@@ -122,7 +122,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.nodeName, "DIV"); 
 
@@ -143,7 +143,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.nodeName, "DIV"); 
 
@@ -155,7 +155,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, "at-form-checkbox");
 
@@ -184,7 +184,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.hasAttribute("label"), true);
             assert.equal(firstRef1.hasAttribute("placeholder"), true);
@@ -204,7 +204,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef2);
             assert.equal(firstRef1 === firstRef2, true);
               
@@ -234,7 +234,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.is, 'at-form-text');
             assert.equal(firstRef1.hasAttribute("label"), true);
@@ -255,7 +255,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#second');
+            firstRef2 = elt.$.coreView.root.querySelector('#second');
             assert.isNotNull(firstRef2);
             assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, 'at-form-checkbox');
@@ -288,7 +288,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.is, 'at-form-text');
             assert.equal(firstRef1.hasAttribute("label"), true);
@@ -309,7 +309,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#second');
+            firstRef2 = elt.$.coreView.root.querySelector('#second');
             assert.isNotNull(firstRef2);
             assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.nodeName, 'DIV');
@@ -340,7 +340,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.nodeName, 'DIV');
 
@@ -363,7 +363,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#second');
+            firstRef2 = elt.$.coreView.root.querySelector('#second');
             assert.isNotNull(firstRef2);
             assert.equal(firstRef1 === firstRef2, false);
             assert.equal(firstRef2.is, 'at-form-text');

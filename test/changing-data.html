@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="test-core-view-helper.html">
     <link rel="import" href="../../at-form-text/at-form-text.html" />
     <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
   </head>
@@ -16,7 +16,7 @@
 
     <test-fixture id="tests">
       <template>
-        <at-core-view></at-core-view>
+        <test-core-view-helper></test-core-view-helper>
       </template>
     </test-fixture>
 
@@ -25,7 +25,7 @@
         
         test('in plain html', function(done) {
           var elt = fixture('tests');
-          elt.updateMode = "1";
+          elt.updateMode = "2";
           elt.modelRoot = "";
           
           var model = {
@@ -43,7 +43,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef1);
             assert.equal(firstRef1.textContent, "aaa prop1Value");
 
@@ -54,7 +54,7 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.isNotNull(firstRef2);
             assert.equal(firstRef1 === firstRef2, true);
             assert.equal(firstRef2.textContent, "aaa prop1Value123");
@@ -65,7 +65,7 @@
 
         test('in at-elements', function(done) {
           var elt = fixture('tests');
-          elt.updateMode = "1";
+          elt.updateMode = "2";
           elt.modelRoot = "";
 
           var model = {
@@ -85,7 +85,7 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            firstRef1 = elt.querySelector('#first');
+            firstRef1 = elt.$.coreView.root.querySelector('#first');
             assert.equal(firstRef1.label, 'prop1Value');
             assert.equal(firstRef1.placeholder, 'prop2Value');
             assert.equal(firstRef1.hint, 'prop3Value');
@@ -100,7 +100,7 @@
             elt.removeEventListener('content-changed', handleContentChanged2);
             console.log('handler executed');
 
-            firstRef2 = elt.querySelector('#first');
+            firstRef2 = elt.$.coreView.root.querySelector('#first');
             assert.equal(firstRef2.label, 'prop1Demo');
             assert.equal(firstRef2.placeholder, 'prop2Demo');
             assert.equal(firstRef2.hint, 'prop3Demo');
