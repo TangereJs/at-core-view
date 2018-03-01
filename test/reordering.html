@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
     <script src="../../web-component-tester/browser.js"></script>
-    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="test-core-view-helper.html">
     <link rel="import" href="../../at-form-text/at-form-text.html" />
     <link rel="import" href="../../at-form-checkbox/at-form-checkbox.html" />
     <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
@@ -16,7 +16,7 @@
 
     <test-fixture id="tests">
       <template>
-        <at-core-view update-mode="1"></at-core-view>
+        <test-core-view-helper update-mode="2"></test-core-view-helper>
       </template>
     </test-fixture>
 
@@ -56,9 +56,9 @@
           function handleContentChanged1(event) {
             elt.removeEventListener('content-changed', handleContentChanged1);
 
-            ref1 = elt.querySelector('#first');
-            ref2 = elt.querySelector('#second');
-            ref3 = elt.querySelector('#third');
+            ref1 = elt.$.coreView.root.querySelector('#first');
+            ref2 = elt.$.coreView.root.querySelector('#second');
+            ref3 = elt.$.coreView.root.querySelector('#third');
             
             assert.isNotNull(ref1);
             assert.isNotNull(ref2);
@@ -75,9 +75,9 @@
           function handleContentChanged2(event) {
             elt.removeEventListener('content-changed', handleContentChanged2);
 
-            elt1 = elt.querySelector('#first');
-            elt2 = elt.querySelector('#second');
-            elt3 = elt.querySelector('#third');
+            elt1 = elt.$.coreView.root.querySelector('#first');
+            elt2 = elt.$.coreView.root.querySelector('#second');
+            elt3 = elt.$.coreView.root.querySelector('#third');
 
             assert.equal(elt1 === ref2, true);
             assert.equal(elt2 === ref1, true);
@@ -94,9 +94,9 @@
           function handleContentChanged3(event) {
             elt.removeEventListener('content-changed', handleContentChanged3);
 
-            elt1 = elt.querySelector('#first');
-            elt2 = elt.querySelector('#second');
-            elt3 = elt.querySelector('#third');
+            elt1 = elt.$.coreView.root.querySelector('#first');
+            elt2 = elt.$.coreView.root.querySelector('#second');
+            elt3 = elt.$.coreView.root.querySelector('#third');
             
             assert.equal(elt1 === ref3, true);
             assert.equal(elt2 === ref1, true);
