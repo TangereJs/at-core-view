@@ -295,15 +295,15 @@
             }
 
             // setDOM updates the DOM but doesn't do style scoping; we do the style scoping manually
-            // var unscopedElements = Polymer.dom(this.root).childNodes;
-            // unscopedElements.forEach(function(node) { 
-            //   if (this._parent) { 
-            //     this._parent.scopeSubtree(node); 
+            var unscopedElements = Polymer.dom(this.root).childNodes;
+            unscopedElements.forEach(function(node) { 
+              if (this._parent) { 
+                this._parent.scopeSubtree(node); 
 
-            //   } else {
-            //     this.scopeSubtree(node);
-            //   }
-            // }, this);
+              } else {
+                this.scopeSubtree(node);
+              }
+            }, this);
 
           } else {
             Polymer.dom(this.root).innerHTML = html;
