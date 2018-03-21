@@ -1,5 +1,4 @@
 <link rel="import" href="../tangere/tangere.html" />
-<link rel="import" href="../at-theme/at-theme.html" />
 <link rel="import" href="../at-core-style-classes/at-core-style-classes.html" />
 
 <script src="lib/set-dom.js"></script>
@@ -22,10 +21,10 @@
         border: 1px solid purple;
       }
     </style>
-      
+
     <div class="layout-horizontal">
-      <div id="innerHtmlContainer" class="sd-column flex"></div>
-      <div id="setdomContainer" class="sd-column flex"><div></div></div>
+      <div id="innerHtmlContainer" class="sd-column layout-flex"></div>
+      <div id="setdomContainer" class="sd-column layout-flex"><div></div></div>
     </div>
 
   </template>
@@ -61,7 +60,7 @@
       setDOM(stPlaceholder, div.firstChild);
       // setDom doesn't operate on the localDOM
       var unscopedElements = Polymer.dom(this.$.setdomContainer).childNodes;
-      unscopedElements.forEach(function(node) { 
+      unscopedElements.forEach(function(node) {
         this.scopeSubtree(node);
       }, this);
     },
