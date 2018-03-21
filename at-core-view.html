@@ -59,7 +59,7 @@
          * Controls the DOM update mode
          * When "0" , innerHTML is used to update
          * When "1" , setDOM is used to update
-         * 
+         *
          * @property updateMode
          * @type String
          * @default "0"
@@ -95,12 +95,10 @@
       },
 
       attached: function() {
-        if(!this._isRendered) this.render();  
+        if(!this._isRendered) this.render();
       },
 
-      ready: function () {
-
-      },
+      ready: function () {},
 
       _getObjPath: function (obj, path) {
 
@@ -123,16 +121,16 @@
       actionListener: function (event) {
 
         this.value = this.modelRoot ? event.detail.model : event.detail.model.state;
-       
+
       },
 
       render: function () {
-        
+
         if (!this.parentNode) return;  // we can't render without parentNode as the parentNode provides the style scope
 
         // Polymer.dom(this).innerHTML can initially be
-        // a) empty, 
-        // b) as a first element child, have a template to be used as a view 
+        // a) empty,
+        // b) as a first element child, have a template to be used as a view
         // c) as a first element cilld, have an element from the rendered template
 
         // we want to set the placeholder only for the first render
@@ -155,7 +153,7 @@
 
         // render immediately if all custom elements are already loaded
         if (tmpl.loaded) {
-          this._render(tmpl.compiledTemplate);          
+          this._render(tmpl.compiledTemplate);
           return;
         }
 
@@ -171,7 +169,7 @@
           var el = tmpl.customElements[i];
 
           var compUrl = this._resolveUrl("../");
-         
+
           if (document.URL.indexOf("/elements/designer-element/") >= 0) {
             compUrl = "/components/";
           }
@@ -184,7 +182,7 @@
 
           if (el.indexOf("/") < 0) el = elf + "/" + el;
           el = compUrl + el + ".html";
-            
+
           // @PERFORMANCE Check if element is in Polymer.telemetry.registrations
           // If its already registered there is no need to call this.importHref
 
@@ -197,10 +195,10 @@
             }
           }, function (e) {
             // loading error
-            var em = "import failed: " + e.target.href;           
+            var em = "import failed: " + e.target.href;
             console.log(em);
             var emdiv = document.createElement('div');
-            emdiv.innerHTML = em;            
+            emdiv.innerHTML = em;
             Polymer.dom(this.root).appendChild(emdiv);
           }, true);
         }
@@ -211,7 +209,7 @@
         var root = '';
         if (module) {
           var assetPath = module.getAttribute('assetpath') || '';
-          root = Polymer.ResolveUrl.resolveUrl(assetPath, module.ownerDocument.baseURI);        
+          root = Polymer.ResolveUrl.resolveUrl(assetPath, module.ownerDocument.baseURI);
         }
         return Polymer.ResolveUrl.resolveUrl(url, root);
       },
@@ -246,7 +244,7 @@
             // place html into div.innerHTML so we have div's children prepared ahead of time
             var div = document.createElement('div');
             Polymer.dom(div).innerHTML = html;
-            
+
             // NOTE div must be appended to document because FF/IE11/Edge do not upgrade
             // custom elements in div.innerHTML otherwise
             document.body.appendChild(div);
@@ -273,12 +271,12 @@
                 existingChild = Polymer.dom(this.root).childNodes[dcnIdx];
                 // existing child now exists
               }
-              
+
               if (child.nodeType === 3) {
                 // we need to clone textNodes because setDOM removes them their parent elements, WTF!?
                 var clone = child.cloneNode();
                 setDOM(existingChild, clone);
-              
+
               } else {
                 setDOM(existingChild, child);
               }
@@ -296,9 +294,9 @@
 
             // setDOM updates the DOM but doesn't do style scoping; we do the style scoping manually
             var unscopedElements = Polymer.dom(this.root).childNodes;
-            unscopedElements.forEach(function(node) { 
-              if (this._parent) { 
-                this._parent.scopeSubtree(node); 
+            unscopedElements.forEach(function(node) {
+              if (this._parent) {
+                this._parent.scopeSubtree(node);
 
               } else {
                 this.scopeSubtree(node);
@@ -310,11 +308,11 @@
           }
 
           Polymer.dom.flush();
-          
+
           if (this._parent) {
-            // -- parse appened code for list of on-* event bindings for parent --    
+            // -- parse appened code for list of on-* event bindings for parent --
             var list = [];
-            
+
             if(!Polymer.Annotations) {
               console.log("FIXME Polymer.Annotations");
             } else {
@@ -350,7 +348,7 @@
           Polymer.Annotations.findAnnotatedNode(root, annote.parent);
         // unwind the stack, returning the indexed node at each level
         if (parent) {
-          // note: marginally faster than indexing via childNodes 
+          // note: marginally faster than indexing via childNodes
           // (http://jsperf.com/childnodes-lookup)
           for (var n = parent.firstChild, i = 0; n; n = n.nextSibling) {
             if (annote.index === i++) {
@@ -404,7 +402,7 @@
         // get template source
         var src = this.view; // start with view property
 
-        // use inner template when provided 
+        // use inner template when provided
         if (!src) {
           var srctmpl = Polymer.dom(this).querySelector('template');
           if (!srctmpl && !src) return null;
@@ -475,7 +473,7 @@
           cex[elNameOrg] = { rel: elNameOrg, folder: prefix, el: elName };
 
           tag = "<" + elName + tag.substr(p0);
-          
+
           return tag;
 
         }.bind(this));
@@ -485,7 +483,7 @@
         var cexc = Object.getOwnPropertyNames(cex);
         for (var i = 0; i < cexc.length; i++) {
           el = cex[cexc[i]];
-         
+
           // replace closing tag
           src = src.split("</" + el.rel + ">").join("</" + el.el + ">");
 
@@ -493,7 +491,7 @@
           ces.push(el.folder + "/" + el.el);
 
         }
-    
+
 
         tmpl = {
           template: src,
