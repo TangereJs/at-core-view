@@ -305,6 +305,7 @@
 
           } else {
             Polymer.dom(this.root).innerHTML = html;
+            Polymer.dom.flush();
           }
 
           Polymer.dom.flush();
