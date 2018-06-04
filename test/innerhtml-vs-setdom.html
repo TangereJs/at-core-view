@@ -56,12 +56,15 @@
       }
 
       function assertPdChildrenEquals(actNode, expNode) {
+        // text nodes do not have any children; return
+        if (actNode.nodeName == "#text" && expNode.nodeName == "#text") return;
+
         var actNodeChildren = Polymer.dom(actNode).children;
         var expNodeChildren = Polymer.dom(expNode).children;
-        
+
         assert.equal(actNodeChildren.length, expNodeChildren.length);
 
-        actNodeChildren.forEach(function(actChild, index) {
+        Array.prototype.forEach.call(actNodeChildren, function(actChild, index) {
           var expChild = expNodeChildren[index];
           var eq = actChild.isEqualNode(expChild);
           assert.equal(eq, true);
