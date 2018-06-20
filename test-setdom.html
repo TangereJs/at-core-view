@@ -57,6 +57,11 @@
       var div = document.createElement('div');
       div.innerHTML = newValue;
 
+      // Polymer 2.x does not create shadowDOM if element or its container are not attached to the DOM
+      document.body.appendChild(div);
+      document.body.removeChild(div);
+      Polymer.dom.flush();
+
       setDOM(stPlaceholder, div.firstChild);
       // setDom doesn't operate on the localDOM
       var unscopedElements = Polymer.dom(this.$.setdomContainer).childNodes;
