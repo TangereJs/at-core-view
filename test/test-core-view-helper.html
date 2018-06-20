@@ -52,7 +52,7 @@
 
     _computeDisconnectedDivInnerHtml: function(model, view) {
       var parsedTemplate = window.Liquid.parse(view);
-      var html = parsedTemplate.render(model);
+      var html = model !== null ? parsedTemplate.render(model) : parsedTemplate.render();
 
       Polymer.dom(this.$.disconnectedDiv).innerHTML = html;
 

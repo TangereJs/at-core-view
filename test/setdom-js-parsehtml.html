@@ -18,7 +18,7 @@
         var bodyHtml = '<body>' + divHtml + '</body>';
         var headHTML = '<head><title>Test</title></head>';
 
-        // test non-root level
+        // test non-root level        
         var parsed = parseHTML(divHtml, 'DIV');
         assert.equal(parsed.outerHTML, divHtml);
 
@@ -114,7 +114,12 @@
           Element.prototype.appendChild = function (child) {
             // this is essentially what iOS 9 Safari and Safari 9 do:
             // lowercase classList but keep html unchanged
-            if (child.hasAttribute('class')) {
+            
+            // In Polymer 1.x CustomElements polyfill lowercase classes behavior works correctly in Chrome, FF, Edge and IE11
+            // In Polymer 2.x CustomElements polyfill changes this lowercase classes behavior. It only works correctly in Chrome. In FF, Edge and IE11 it doesn't work.
+            var polymerVersion = parseInt(Polymer.version);
+
+            if (polymerVersion == "1" && child.hasAttribute('class')) {
               child.setAttribute('class', child.getAttribute('class').toLowerCase());
             }
 
