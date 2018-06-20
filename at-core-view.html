@@ -404,7 +404,13 @@
           if (!srctmpl && !src) return null;
 
           if (srctmpl) {
-            src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+            // In Polymer 2.x _content is now just content
+            var polymerVersion = parseInt(Polymer.version)
+            if (polymerVersion == 2) {
+              src = this._getNodesInnerHTML(srctmpl.content.childNodes);
+            } else {
+              src = this._getNodesInnerHTML(srctmpl._content.childNodes);
+            }
             //src = srctmpl.innerHTML; // requires template to be wrapped into <template preserve-content> !
             this.view = src; // save initial static template, triggers observer
             return null;
