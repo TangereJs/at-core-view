@@ -185,8 +185,9 @@
 
           this.importHref(el, function (e) {
             this._pendingImports--;
-
-            if (this._pendingImports < 1) {
+            
+            // changing from < 1 to == 0 because in Polymer 2.x and FF 61, this callback gets called twice and _pending imports becomes -1
+            if (this._pendingImports == 0) {
               this._tmpl.loaded = true;
               this._render(this._tmpl.compiledTemplate);
             }
