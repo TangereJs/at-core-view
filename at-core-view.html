@@ -432,7 +432,7 @@
 
         tmpl = Liquid.parse(src);
 
-        var elPattern = /<\w+-[a-z0-9\-]+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
+        var elPattern = /<\w+-[a-z0-9\-]+((\s+[a-z0-9\-]+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
         var ctags = src.match(elPattern);
         var ces = {},
           p0 = 0,
@@ -457,7 +457,7 @@
         var cex = {};
         var elName = "";
 
-        elPattern = /<\w+\.[a-z0-9\-]+((\s+\w+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
+        elPattern = /<\w+\.[a-z0-9\-]+((\s+[a-z0-9\-]+(\s*=\s*(?:"(.|\n)*?"|'(.|\n)*?'|[^'">\s]+))?)+\s*|\s*)>/gi;
         src = src.replace(elPattern,function(tag) {
           p0 = tag.indexOf(">");
           p1 = tag.indexOf(" ");
