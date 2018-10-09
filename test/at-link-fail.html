@@ -1,0 +1,106 @@
+<!doctype html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <title>at-link failure tests</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <link rel="import" href="../at-core-view.html">
+    <link rel="import" href="../../at-link/at-link.html" />
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html" />
+    <script>
+      window.ComponentsBase = "/components/";
+    </script>
+  </head>
+
+  <body>
+
+    <test-fixture id="tests">
+      <template>
+        <at-core-view></at-core-view>
+      </template>
+    </test-fixture>
+
+    <script>
+      suite('at-link failure', function() {
+
+        test('test 1', function(done) {
+          var elt = fixture('tests');
+          elt.modelRoot = "state";
+          elt.updateMode = "1";
+
+          var viewVal1 = "<at-link><div>{{ selected.title }}</div></at-link>";
+          var model1 = {
+            state: {
+              selected: {
+                title: "Title 1"
+              }
+            }
+          };
+
+          var model2 = {
+            state: {
+              selected: {
+                title: "Title 2"
+              }
+            }
+          };
+
+          elt.model = model1;
+
+          function handleContentChanged(event) {
+            elt.removeEventListener('content-changed', handleContentChanged);
+            elt.addEventListener('content-changed', handleContentChanged2);
+            
+            // 
+            // Confirm that div has textContent of Title 1
+            //   
+            var linkElt = Polymer.dom(elt.root).querySelector('at-link');
+            var effChildren = linkElt.getEffectiveChildren();
+            assert.equal(effChildren.length, 1);
+            var divElt = effChildren[0];
+            assert.equal(divElt.textContent, 'Title 1');
+
+            try {
+              elt.model = model2;
+              
+            } catch (e) {
+              assert.equal(false, true);
+            }
+          }
+
+          function handleContentChanged2(event) {
+            elt.removeEventListener('content-changed', handleContentChanged2);
+            
+            // 
+            // Confirm that div has textContent of Title 2
+            //   
+            var linkElt = Polymer.dom(elt.root).querySelector('at-link');
+            var effChildren = linkElt.getEffectiveChildren();
+            assert.equal(effChildren.length, 1);
+            var divElt = effChildren[0];
+            assert.equal(divElt.textContent, 'Title 2');
+
+            done();
+          }
+
+          elt.addEventListener('content-changed', handleContentChanged);
+
+          try {
+            elt.view = viewVal1;
+          
+          } catch(e) {
+            assert.equal(true, true);
+          }
+
+        });
+
+      });
+
+    </script>
+
+  </body>
+
+</html>
