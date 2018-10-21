@@ -161,49 +161,52 @@
           return;
         }
 
-        //Polymer.dom(this).innerHTML = "";
 
+        // delay importing of elements to allow container to render
 
-        // import all referenced custom elements, render template when imports are finished
-        this._pendingImports = tmpl.customElements.length;
-        this._tmpl = tmpl;
+        this.async(function () {
 
-        for (var i = 0; i < tmpl.customElements.length; i++) {
+          // import all referenced custom elements, render template when imports are finished
+          this._pendingImports = tmpl.customElements.length;
+          this._tmpl = tmpl;
 
-          var el = tmpl.customElements[i];
+          for (var i = 0; i < tmpl.customElements.length; i++) {
 
-          var compUrl = this._resolveUrl("../");
+            var el = tmpl.customElements[i];
 
-          if (document.URL.indexOf("/elements/designer-element/") >= 0) {
-            compUrl = "/components/";
-          }
+            var compUrl = this._resolveUrl("../");
 
-          if (window.ComponentsBase != undefined) compUrl = window.ComponentsBase;
-
-          // import default.card by stripping -card from folder name
-          var elf = el;
-          if (elf.indexOf("-card") > 0 && elf.substring(elf.length - 5) == "-card") elf = elf.substring(0, elf.length - 5);
-
-          if (el.indexOf("/") < 0) el = elf + "/" + el;
-          el = compUrl + el + ".html";
-
-          this.importHref(el, function (e) {
-            this._pendingImports--;
-            
-            // changing from < 1 to == 0 because in Polymer 2.x and FF 61, this callback gets called twice and _pending imports becomes -1
-            if (this._pendingImports == 0) {
-              this._tmpl.loaded = true;
-              this._render(this._tmpl.compiledTemplate);
+            if (document.URL.indexOf("/elements/designer-element/") >= 0) {
+              compUrl = "/components/";
             }
-          }, function (e) {
-            // loading error
-            var em = "import failed: " + e.target.href;
-            console.log(em);
-            var emdiv = document.createElement('div');
-            emdiv.innerHTML = em;
-            Polymer.dom(this.root).appendChild(emdiv);
-          }, true);
-        }
+
+            if (window.ComponentsBase != undefined) compUrl = window.ComponentsBase;
+
+            // import default.card by stripping -card from folder name
+            var elf = el;
+            if (elf.indexOf("-card") > 0 && elf.substring(elf.length - 5) == "-card") elf = elf.substring(0, elf.length - 5);
+
+            if (el.indexOf("/") < 0) el = elf + "/" + el;
+            el = compUrl + el + ".html";
+
+            this.importHref(el, function (e) {
+              this._pendingImports--;
+
+              // changing from < 1 to == 0 because in Polymer 2.x and FF 61, this callback gets called twice and _pending imports becomes -1
+              if (this._pendingImports == 0) {
+                this._tmpl.loaded = true;
+                this._render(this._tmpl.compiledTemplate);
+              }
+            }, function (e) {
+              // loading error
+              var em = "import failed: " + e.target.href;
+              console.log(em);
+              var emdiv = document.createElement('div');
+              emdiv.innerHTML = em;
+              Polymer.dom(this.root).appendChild(emdiv);
+            }, true);
+          }
+        }, 200);
       },
 
       _resolveUrl: function (url) {
@@ -305,8 +308,7 @@
             }, this);
 
           } else {
-            Polymer.dom(this.root).innerHTML = html;
-            Polymer.dom.flush();
+            Polymer.dom(this.root).innerHTML = html;           
           }
 
           Polymer.dom.flush();
