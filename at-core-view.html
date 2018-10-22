@@ -96,6 +96,7 @@
 
       created: function () {
         this.templateCache = templateCache;
+        this._isFirstRender = true;
       },
 
       attached: function() {
@@ -132,26 +133,15 @@
 
         if (!this.parentNode) return;  // we can't render without parentNode as the parentNode provides the style scope
 
-        // Polymer.dom(this).innerHTML can initially be
-        // a) empty,
-        // b) as a first element child, have a template to be used as a view
-        // c) as a first element cilld, have an element from the rendered template
-
-        // we want to set the placeholder only for the first render
-        // we detect the first render by empty innerHTML or template as firstElementChild
-        // otherwise we skip the placeholder and allow setDOM to update the innerHTML
-
-        var feChild = Polymer.dom(this.root).firstElementChild;
-        var isFirstRender = this._isFirstRender = feChild === null || feChild.nodeName === "TEMPLATE";
-
-        if (isFirstRender && this.placeholder && this.view) Polymer.dom(this).innerHTML = this.placeholder;
-        Polymer.dom.flush();
+        if (this._isFirstRender && this.placeholder && this.view) {
+          Polymer.dom(this).innerHTML = this.placeholder;
+          Polymer.dom.flush();
+        } 
 
         var tmpl = this._getCompiledTemplate();
         if (!tmpl) {
           return;
         }
-
 
         this._isRendered = true;
 
@@ -243,6 +233,10 @@
           var html = tmpl.render(root);
           
           var useSetDom = this.updateMode === "2" || (this.updateMode === "1" && !this._isFirstRender);
+          
+          if (this._isFirstRender == true) {
+            this._isFirstRender = false;
+          }
 
           if (useSetDom) {
             // place html into div.innerHTML so we have div's children prepared ahead of time
