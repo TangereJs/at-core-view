@@ -312,7 +312,7 @@
             var list = [];
 
             if(!Polymer.Annotations) {
-              console.log("FIXME Polymer.Annotations");
+              // console.log("FIXME Polymer.Annotations");
             } else {
               Polymer.Annotations._parseNodeAnnotations(this.root, list);
               
@@ -321,6 +321,7 @@
                 if (a.events && a.events.length) {
                   var node = this._findAnnotatedNode(this.root, a);
                   a.events.forEach(function (e) {
+                    console.log("FIXME still using on-* " + e.name);
                     this._parent.listen(node, e.name, e.value);
                   }, this);
                 }
