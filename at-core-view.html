@@ -284,9 +284,11 @@
             var rcLen = Polymer.dom(this.root).childNodes.length;
             if (dcLen && dcLen < rcLen) {
               // remove children from DOM
-              for (var dcIdx=dcLen; dcIdx < rcLen; dcIdx++) {
-                var ctr = Polymer.dom(this.root).childNodes[dcIdx];
+              while(dcLen < rcLen) {
+                var ctr = Polymer.dom(this.root).childNodes[dcLen];
                 Polymer.dom(ctr.parentElement).removeChild(ctr);
+                
+                rcLen = Polymer.dom(this.root).childNodes.length;
               }
             }
 
