@@ -174,7 +174,7 @@
 
             // import default.card by stripping -card from folder name
             var elf = el;
-            if (elf.indexOf("-card") > 0 && elf.substring(elf.length - 5) == "-card") elf = elf.substring(0, elf.length - 5);
+            if (elf != "at-app-card" && elf.indexOf("-card") > 0 && elf.substring(elf.length - 5) == "-card") elf = elf.substring(0, elf.length - 5);
 
             if (el.indexOf("/") < 0) el = elf + "/" + el;
             el = compUrl + el + ".html";
