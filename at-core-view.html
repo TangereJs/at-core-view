@@ -148,8 +148,10 @@
 
         // render immediately if all custom elements are already loaded
         if (tmpl.loaded) {
-          this._render(tmpl.compiledTemplate);
-          return;
+          this.async(function () {
+            this._render(tmpl.compiledTemplate);
+            return;
+          }, 50);
         }
 
 
