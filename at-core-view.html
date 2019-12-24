@@ -148,16 +148,16 @@
 
         // render immediately if all custom elements are already loaded
         if (tmpl.loaded) {
-          this.async(function () {
+          Tangere.asyncQueue.add(function () {
             this._render(tmpl.compiledTemplate);
             return;
-          }, 50);
+          }, this);
         }
 
 
         // delay importing of elements to allow container to render
 
-        this.async(function () {
+        Tangere.asyncQueue.add(function () {
 
           // import all referenced custom elements, render template when imports are finished
           this._pendingImports = tmpl.customElements.length;
@@ -199,7 +199,7 @@
               Polymer.dom(this.root).appendChild(emdiv);
             }, true);
           }
-        }, 200);
+        }, this);
       },
 
       _resolveUrl: function (url) {
