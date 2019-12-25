@@ -145,10 +145,17 @@
         }
 
         this._isRendered = true;
+        this._root = this.value || this.model;
+        if (this.modelRoot) this._root = this._getObjPath(this._root, this.modelRoot);
+
+        var name = "view";
+        if (this._gid) name = name + "_" + this._gid;
+        if (this._root && this._root.id) name = name + "_" + this._root.id;
+                
 
         // render immediately if all custom elements are already loaded
         if (tmpl.loaded) {
-          Tangere.asyncQueue.add(function () {
+          Tangere.asyncQueue.add(name, function () {
             this._render(tmpl.compiledTemplate);
             return;
           }, this);
@@ -157,7 +164,7 @@
 
         // delay importing of elements to allow container to render
 
-        Tangere.asyncQueue.add(function () {
+        Tangere.asyncQueue.add(name, function () {
 
           // import all referenced custom elements, render template when imports are finished
           this._pendingImports = tmpl.customElements.length;
@@ -229,11 +236,8 @@
             var r = this._parent.T.apply(this._parent, arguments);
             return r;
           }.bind(this);
-
-          var root = this.value || this.model;
-          if (this.modelRoot) root = this._getObjPath(root, this.modelRoot);
-
-          var html = tmpl.render(root);
+                
+          var html = tmpl.render(this._root);
           
           var useSetDom = this.updateMode === "2" || (this.updateMode === "1" && !this._isFirstRender);
           
