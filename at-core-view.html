@@ -173,7 +173,11 @@
           for (var i = 0; i < tmpl.customElements.length; i++) {
 
             var el = tmpl.customElements[i];
-
+            if(el=="at-carbon-tab") {      
+              this._pendingImports--;
+              continue; // loaded by at-carbon-tabs
+            }
+            
             var compUrl = this._resolveUrl("../");
 
             if (document.URL.indexOf("/elements/designer-element/") >= 0) {
@@ -502,9 +506,7 @@
 
           // save expanded name to list of elements to import
           ces.push(el.folder + "/" + el.el);
-
         }
-
 
         tmpl = {
           template: src,
